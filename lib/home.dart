@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.secondary,
               ),
             ),
             ListTile(
@@ -45,18 +45,17 @@ class HomeScreen extends StatelessWidget {
         onPressed: () {
           // Add your onPressed logic here
         },
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0), // Adjust the value as needed
-        ),
-        backgroundColor: Theme.of(context).colorScheme.primary, // Adjust the background color as needed
+        // Adjust the background color as needed
         child: Icon(
           Icons.search,
-          color: Colors.white, // Adjust the icon color as needed
+          // Adjust the icon color as needed
         ),
       ),
       body: Column(
         children: [
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
           Center(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance.collection('laws').snapshots(),
@@ -90,7 +89,8 @@ class HomeScreen extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => LawDetailScreen(law: laws[index]),
+                                  builder: (context) =>
+                                      LawDetailScreen(law: laws[index]),
                                 ),
                               );
                             },
@@ -98,18 +98,18 @@ class HomeScreen extends StatelessWidget {
                               width: 350, // Adjust the width as needed
                               padding: EdgeInsets.all(8.0),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.0),
-                                color: Colors.blue, // Adjust the button color as needed
-                              ),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .surfaceTint // Adjust the button color as needed
+                                  ),
                               child: Column(
                                 children: [
-                                  Text(
-                                    laws[index].title,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.white, // Adjust the title color as needed
-                                    ),
-                                  ),
+                                  Text(laws[index].title,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium!
+                                          .copyWith(color: Colors.black)),
                                   SizedBox(height: 8.0),
                                   Text(
                                     laws[index].information.join('\n'),
@@ -117,7 +117,8 @@ class HomeScreen extends StatelessWidget {
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.white, // Adjust the information color as needed
+                                      color: Colors
+                                          .white, // Adjust the information color as needed
                                     ),
                                   ),
                                 ],
@@ -144,4 +145,3 @@ class Law {
 
   Law({required this.title, required this.information});
 }
-

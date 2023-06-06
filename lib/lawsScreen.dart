@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_lawyer/chat.dart';
 import 'package:my_lawyer/home.dart';
+
 class LawDetailScreen extends StatelessWidget {
   final Law law;
 
@@ -30,39 +31,38 @@ class LawDetailScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: GestureDetector(
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>  Chat(),
-      ),
-    );
-  },
-  child: Stack(
-    alignment: Alignment.center,
-    children: [
-      Container(
-        width: 200.0, // Adjust the width as needed
-        child: FloatingActionButton(
-          onPressed: () {},
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          backgroundColor: Theme.of(context).colorScheme.primary,
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Chat(),
+            ),
+          );
+        },
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              width: 200.0, // Adjust the width as needed
+              child: FloatingActionButton(
+                onPressed: () {},
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            const Text(
+              'Learn More',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+          ],
         ),
       ),
-      const Text(
-        'Learn More',
-        style: TextStyle(
-          fontSize: 16,
-          color: Colors.white,
-        ),
-      ),
-    ],
-  ),
-),
-floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
-
   }
 }
