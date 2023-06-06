@@ -1,50 +1,80 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: MyApp(),
+  ));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
+class MyApp extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'MyLawyer',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    _createAnonymousUserAndNavigate();
+  }
+
+  Future<void> _createAnonymousUserAndNavigate() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    UserCredential userCredential = await auth.signInAnonymously();
+    User user = userCredential.user!;
+    // Use the user object for further operations or store the user ID
+
+    // Create a Firestore collection with the UID of the anonymous user
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    await firestore.collection('users').doc(user.uid).set({
+    
+      'anonymous': true,
+    });
+
+    // Navigate to home screen after successful user creation
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HomeScreen(user.uid),
       ),
-      home: const MyHomePage(title: 'MyLawyer'),
     );
   }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: Text('Loading...')
+      ),
+    );
+  }
+  
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+
+class HomeScreen extends StatelessWidget {
+  final String uid;
+
+  HomeScreen(this.uid);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
+      
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'ELO',
+          children: [
+            Text(
+              'UID: $uid',
+              style: TextStyle(fontSize: 16),
             ),
           ],
         ),
