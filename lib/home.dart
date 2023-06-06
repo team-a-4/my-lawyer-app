@@ -1,0 +1,147 @@
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:my_lawyer/lawsScreen.dart';
+
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('My Lawyer'),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              child: Text(
+                'Menu',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
+              ),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            ListTile(
+              title: Text('Item 1'),
+              onTap: () {
+                // Handle item 1 press
+              },
+            ),
+            ListTile(
+              title: Text('Item 2'),
+              onTap: () {
+                // Handle item 2 press
+              },
+            ),
+            // Add more list tiles for additional menu items
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Add your onPressed logic here
+        },
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0), // Adjust the value as needed
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary, // Adjust the background color as needed
+        child: Icon(
+          Icons.search,
+          color: Colors.white, // Adjust the icon color as needed
+        ),
+      ),
+      body: Column(
+        children: [
+          SizedBox(height: 10,),
+          Center(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance.collection('laws').snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                }
+
+                final laws = snapshot.data!.docs.map((doc) {
+                  return Law(
+                    title: doc['Title'] ?? '',
+                    information: List<String>.from(doc['information']),
+                  );
+                }).toList();
+
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: laws.length,
+                        itemBuilder: (context, index) {
+                          return TextButton(
+                            onPressed: () {
+                              // Navigate to another screen
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LawDetailScreen(law: laws[index]),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              width: 350, // Adjust the width as needed
+                              padding: EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0),
+                                color: Colors.blue, // Adjust the button color as needed
+                              ),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    laws[index].title,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white, // Adjust the title color as needed
+                                    ),
+                                  ),
+                                  SizedBox(height: 8.0),
+                                  Text(
+                                    laws[index].information.join('\n'),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.white, // Adjust the information color as needed
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class Law {
+  final String title;
+  final List<String> information;
+
+  Law({required this.title, required this.information});
+}
+
