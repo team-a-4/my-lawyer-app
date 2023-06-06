@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
 
 class Chat extends StatefulWidget {
   const Chat({Key? key}) : super(key: key);
@@ -6,7 +8,17 @@ class Chat extends StatefulWidget {
   @override
   State<Chat> createState() => _ChatState();
 }
+Future<void> fetchAPI() async {
+  final response = await http.get(Uri.parse('https://my-lawyer-api.sarwin.repl.co/message'));
 
+  if (response.statusCode == 200) {
+    // API request successful, process the response
+    print(response.body);
+  } else {
+    // API request failed
+    print('Error: ${response.statusCode}');
+  }
+}
 class _ChatState extends State<Chat> with TickerProviderStateMixin{
   bool showButtons = false;
   late AnimationController _animationController;
@@ -44,6 +56,13 @@ class _ChatState extends State<Chat> with TickerProviderStateMixin{
     return Scaffold(
       appBar: AppBar(
         title: Text('Chat'),
+        actions: [IconButton(
+      onPressed: () {
+         setState(() {
+          showButtons = !showButtons;
+         });
+      },
+      icon: Icon(Icons.more_vert),),],
       ),
       body: Stack(
         children: [
@@ -97,7 +116,10 @@ class _ChatState extends State<Chat> with TickerProviderStateMixin{
                           Theme.of(context).colorScheme.primary,
                       radius: 22.5,
                       child: IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+
+                          print("hello");
+                        },
                         icon: const Icon(Icons.send_rounded),
                         color: Colors.white,
                       ),
