@@ -1,9 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:my_lawyer/chat.dart';
+import 'package:my_lawyer/constitution.dart';
 import 'package:my_lawyer/lawsScreen.dart';
 
 class HomeScreen extends StatelessWidget {
+  final List<Law> laws = [
+    Law(
+      title: 'Constitution',
+      screen: const Constitution(),
+    ),
+    Law(
+      title: 'Others',
+      screen: const Constitution(),
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +30,7 @@ class HomeScreen extends StatelessWidget {
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
-              child: Text(
+              child: const Text(
                 'Menu',
                 style: TextStyle(
                   color: Colors.white,
@@ -31,15 +43,11 @@ class HomeScreen extends StatelessWidget {
             ),
             ListTile(
               title: Text('Item 1'),
-              onTap: () {
-                // Handle item 1 press
-              },
+              onTap: () {},
             ),
             ListTile(
               title: Text('Item 2'),
-              onTap: () {
-                // Handle item 2 press
-              },
+              onTap: () {},
             ),
             // Add more list tiles for additional menu items
           ],
@@ -77,97 +85,19 @@ class HomeScreen extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Column(
-          children: [
-            SizedBox(
-              height: 10,
-            ),
-            Center(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance.collectionGroup('constitution_ch').snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  }
-
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
-                  }
-
-                  final laws = snapshot.data!.docs.map((doc) {
-                    final title = doc.reference.parent!.id; // Extracting the parent collection ID as the title
-                    final subtitle = [doc.id]; // Creating a list with the document ID as the subtitle
-                    return Law(
-                      title: title,
-                      subtitle: subtitle,
-                    );
-                  }).toList();
-
-                  return Column(
-                    children: [
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: laws.length,
-                        itemBuilder: (context, index) {
-                          return TextButton(
-                            onPressed: () {
-                              // Navigate to another screen
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (context) =>
-                              //         LawDetailScreen(law: laws[index]),
-                              //   ),
-                              // );
-                            },
-                            child: Container(
-                              width: 350,
-                              height: 110, // Adjust the width as needed
-                              padding: EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.0),
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .surfaceTint, // Adjust the button color as needed
-                              ),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    laws[index].title,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium!
-                                        .copyWith(color: Colors.black),
-                                  ),
-                                  SizedBox(height: 8.0),
-                                  Flexible(
-                                    child: ListView.builder(
-                                      shrinkWrap: true,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      itemCount: laws[index].subtitle.length,
-                                      itemBuilder: (context, subIndex) {
-                                        final subtitle = laws[index].subtitle[subIndex];
-                                        return ListTile(
-                                          title: Text(subtitle),
-                                          onTap: () {
-                                            // Handle subtitle tap
-                                          },
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ],
+          children: laws.map((law) {
+            return CardButton(
+              title: law.title,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => law.screen,
+                  ),
+                );
+              },
+            );
+          }).toList(),
         ),
       ),
     );
@@ -176,7 +106,38 @@ class HomeScreen extends StatelessWidget {
 
 class Law {
   final String title;
-  final List<String> subtitle;
+  final Widget screen;
 
-  Law({required this.title, required this.subtitle});
+  Law({required this.title, required this.screen});
+}
+
+class CardButton extends StatelessWidget {
+  final String title;
+  final VoidCallback onTap;
+
+  const CardButton({
+    required this.title,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 100, // Set the desired height of the card
+      child: Card(
+        color: Theme.of(context).colorScheme.primary, // Set the background color of the card
+        child: ListTile(
+          title: Text(
+            title,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              fontSize: 18, // Set the text color
+            ),
+          ),
+          onTap: onTap,
+        ),
+      ),
+    );
+  }
 }
