@@ -9,7 +9,7 @@ class Chat extends StatefulWidget {
   State<Chat> createState() => _ChatState();
 }
 Future<void> fetchAPI() async {
-  final response = await http.get(Uri.parse('https://my-lawyer-api.sarwin.repl.co/message'));
+  final response = await http.get(Uri.parse('https://my-lawyer-api.sarwin.repl.co/ping'));
 
   if (response.statusCode == 200) {
     // API request successful, process the response
@@ -118,7 +118,7 @@ class _ChatState extends State<Chat> with TickerProviderStateMixin{
                       child: IconButton(
                         onPressed: () {
 
-                          print("hello");
+                          fetchAPI();
                         },
                         icon: const Icon(Icons.send_rounded),
                         color: Colors.white,
