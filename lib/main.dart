@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:my_lawyer/chat.dart';
 
 import 'home.dart';
 
@@ -32,7 +33,9 @@ void main() async {
           ),
           useMaterial3: true,
         ),
+        
       );
+      
     },
   ));
 }
@@ -227,8 +230,37 @@ class _MyAppState extends State<MyApp> {
     ];
     return Scaffold(
       body: Center(
-          child: listOfAnimations[Random().nextInt(listOfAnimations.length)]
-              .widget),
+        child: listOfAnimations[Random().nextInt(listOfAnimations.length)].widget,
+      ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Chat(),
+                ),
+              );
+            },
+            child: Icon(
+              Icons.support_agent,
+            ),
+            heroTag: 'chatButton', // Assign a unique tag to the first FAB
+          ),
+          SizedBox(height: 16.0), // Add spacing between the buttons
+          FloatingActionButton(
+            onPressed: () {
+              // Add your onPressed logic here
+            },
+            child: Icon(
+              Icons.search,
+            ),
+            heroTag: 'searchButton', // Assign a unique tag to the second FAB
+          ),
+        ],
+      ),
     );
   }
 }
