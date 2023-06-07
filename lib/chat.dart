@@ -78,14 +78,14 @@ class _ChatState extends State<Chat> with TickerProviderStateMixin{
                 padding: const EdgeInsets.only(left: 10, right: 10),
                 child: Row(
                   children: [
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          showButtons = !showButtons;
-                        });
-                      },
-                      icon: const Icon(Icons.add),
-                    ),
+                    // IconButton(
+                    //   onPressed: () {
+                    //     setState(() {
+                    //       showButtons = !showButtons;
+                    //     });
+                    //   },
+                    //   icon: const Icon(Icons.add),
+                    // ),
                     Expanded(
                       child: Card(
                         margin: EdgeInsets.only(left: 2, right: 2, bottom: 8),
@@ -131,9 +131,9 @@ class _ChatState extends State<Chat> with TickerProviderStateMixin{
           ),
           showButtons
               ? Positioned(
-                  bottom: 40,
+                  top: 0,
                   
-                  left: 7,
+                  right: 10,
                   child: AnimatedBuilder(
                   animation: _slideAnimation,
                   builder: (context, child) {
