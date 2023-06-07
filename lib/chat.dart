@@ -13,11 +13,14 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> with TickerProviderStateMixin {
+  String buttonText = 'U';
+  Color buttonColor = Color.fromARGB(255, 33, 33, 243);
   final messageController = TextEditingController();
   bool showButtons = false;
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
-  String responseMessage='';
+  String responseMessage = '';
+  String message_ = '';
   var chatDocId;
   List<String> chatMessages = []; // List to store chat messages
 
@@ -86,41 +89,89 @@ class _ChatState extends State<Chat> with TickerProviderStateMixin {
                 children: [
                   Expanded(
                     child: ListView.builder(
-                  reverse: true,
-                  itemCount: chatMessages.length,
-                  itemBuilder: (context, index) {
-                    var message = chatMessages[index];
-                    if (index == chatMessages.length - 1) {
-                          
-                        
-                      return ChatBubble(
-                        clipper: ChatBubbleClipper7(type: BubbleType.sendBubble),
-                        alignment: Alignment.topRight,
-                        margin: const EdgeInsets.only(top: 20),
-                        backGroundColor: Colors.blue,
-                        child: Text(
-                          responseMessage,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      );
-                    } else {
-                      return ChatBubble(
-                        clipper: ChatBubbleClipper7(type: BubbleType.receiverBubble),
-                        alignment: Alignment.topLeft,
-                        margin: const EdgeInsets.only(top: 20),
-                        backGroundColor: Colors.grey[300],
-                        child: Text(message),
-                      );
-                    }
-                  },
-                ),
-
-
+                      reverse: true,
+                      itemCount: chatMessages.length,
+                      itemBuilder: (context, index) {
+                        var message = chatMessages[index];
+                        if (index == chatMessages.length - 1) {
+                          return ChatBubble(
+                            clipper:
+                                ChatBubbleClipper5(type: BubbleType.sendBubble),
+                            alignment: Alignment.topRight,
+                            margin: const EdgeInsets.only(top: 20, right: 10),
+                            backGroundColor: Colors.blue,
+                            child: Text(
+                              message_,
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          );
+                        } else {
+                          return Stack(
+                            children: [
+                              const Positioned(
+                                top: 25,
+                                left: 7,
+                                child: CircleAvatar(
+                                  radius: 10,
+                                  backgroundColor:
+                                      Color.fromARGB(255, 243, 33, 33),
+                                  child: Text(
+                                    'AI',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              ChatBubble(
+                                clipper: ChatBubbleClipper5(
+                                    type: BubbleType.receiverBubble),
+                                alignment: Alignment.topLeft,
+                                margin:
+                                    const EdgeInsets.only(top: 20, left: 32),
+                                backGroundColor: Colors.grey[300],
+                                child: Text(message),
+                              ),
+                            ],
+                          );
+                        }
+                      },
+                    ),
                   ),
                   Container(
                     padding: const EdgeInsets.only(left: 10, right: 10),
                     child: Row(
                       children: [
+                        Positioned(
+                          top: 10,
+                          left: 0,
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                if (buttonText == 'U') {
+                                  buttonText = 'A';
+                                  buttonColor = Colors.red;
+                                } else {
+                                  buttonText = 'U';
+                                  buttonColor =
+                                      Color.fromARGB(255, 33, 33, 243);
+                                }
+                              });
+                            },
+                            child: CircleAvatar(
+                              radius: 10,
+                              backgroundColor: buttonColor,
+                              child: Text(
+                                buttonText,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                         Expanded(
                           child: Card(
                             margin: const EdgeInsets.only(
@@ -190,10 +241,11 @@ class _ChatState extends State<Chat> with TickerProviderStateMixin {
     var headers = {'Content-Type': 'application/json'};
 
     // Request body
-    var body = json.encode({ 
+    var body = json.encode({
       'chatID': 'TESTING',
       'message': msg,
-      'debug': 'true',});
+      'debug': 'true',
+    });
 
     // Send POST request
     var response = await http.post(url, headers: headers, body: body);
@@ -204,15 +256,28 @@ class _ChatState extends State<Chat> with TickerProviderStateMixin {
     // Handle the response data
     if (statusCode == 200) {
       var responseData = json.decode(response.body);
-      responseMessage = responseData['message'];
-      
+      var responseMessage = responseData['message'];
+
+      // Create a new document in the "chat" collection
     
+        // Create a new document in the "chat" collection
+        var newDocRef = await FirebaseFirestore.instance.collection("chat").add({
+          'messages': ['u-$msg'],
+        });
+        chatDocId = newDocRef.id; // Store the document ID for future use
+     
 
       // Update the UI with the response message
       setState(() {
+        // Update the message_ variable with the new message text
+        message_ = msg;
+
         // Add the response message to the chatMessages list
         chatMessages.add(responseMessage);
       });
+
+      // Clear the TextEditingController
+      messageController.clear();
     } else {
       print('Request failed with status: $statusCode');
     }
