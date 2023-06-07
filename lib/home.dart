@@ -7,7 +7,10 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Lawyer'),
+        title: const Text(
+          'Attorney AI',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       drawer: Drawer(
         child: ListView(
@@ -51,32 +54,36 @@ class HomeScreen extends StatelessWidget {
           // Adjust the icon color as needed
         ),
       ),
-      body: Column(
-        children: [
-          SizedBox(
-            height: 10,
-          ),
-          Center(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance.collection('laws').snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                }
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 10,
+            ),
+            Center(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('constitution_ch1')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  }
 
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  }
 
-                final laws = snapshot.data!.docs.map((doc) {
-                  return Law(
-                    title: doc['Title'] ?? '',
-                    information: List<String>.from(doc['information']),
-                  );
-                }).toList();
+                  final laws = snapshot.data!.docs.map((doc) {
+                    final title =
+                        doc.id; // Extracting the document ID as the title
+                    return Law(
+                      title: title,
+                      information: List<String>.from(doc['information']),
+                    );
+                  }).toList();
 
-                return SingleChildScrollView(
-                  child: Column(
+                  return Column(
                     children: [
                       ListView.builder(
                         shrinkWrap: true,
@@ -95,30 +102,35 @@ class HomeScreen extends StatelessWidget {
                               );
                             },
                             child: Container(
-                              width: 350, // Adjust the width as needed
+                              width: 350,
+                              height: 110, // Adjust the width as needed
                               padding: EdgeInsets.all(8.0),
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .surfaceTint // Adjust the button color as needed
-                                  ),
+                                borderRadius: BorderRadius.circular(8.0),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceTint, // Adjust the button color as needed
+                              ),
                               child: Column(
                                 children: [
-                                  Text(laws[index].title,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium!
-                                          .copyWith(color: Colors.black)),
-                                  SizedBox(height: 8.0),
                                   Text(
-                                    laws[index].information.join('\n'),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors
-                                          .white, // Adjust the information color as needed
+                                    laws[index].title,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(color: Colors.black),
+                                  ),
+                                  SizedBox(height: 8.0),
+                                  Flexible(
+                                    child: Text(
+                                      laws[index].information.join('\n'),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors
+                                            .white, // Adjust the information color as needed
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -128,12 +140,12 @@ class HomeScreen extends StatelessWidget {
                         },
                       ),
                     ],
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

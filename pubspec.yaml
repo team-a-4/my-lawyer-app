@@ -42,6 +42,7 @@ dependencies:
   loading_animation_widget: ^1.2.0+4
   http: ^1.0.0
   dynamic_color: ^1.6.5
+  flutter_chat_bubble: ^2.0.2
 
 dev_dependencies:
   flutter_test:
