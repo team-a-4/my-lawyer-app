@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_lawyer/chat/chat.dart';
-import 'package:my_lawyer/constitution/constitution_home.dart';
+import 'package:my_lawyer/constitution/constitution_nav.dart';
 import 'package:my_lawyer/home/widgets/card_button.dart';
 
 class HomeScreen extends StatelessWidget {
