@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:my_lawyer/chat/chat.dart';
 import 'package:my_lawyer/constitution/constitution_nav.dart';
-import 'package:my_lawyer/home/widgets/card_button.dart';
+import 'package:my_lawyer/home/search.dart';
 import 'package:my_lawyer/user.dart';
 import 'package:uuid/uuid.dart';
 
@@ -119,14 +119,18 @@ class HomeScreen extends StatelessWidget {
             ),
             heroTag: 'chatButton', // Assign a unique tag to the first FAB
           ),
-          SizedBox(height: 16.0), // Add spacing between the buttons
+          const SizedBox(height: 16.0),
+          // Add spacing between the buttons
           FloatingActionButton(
             onPressed: () {
-              // Add your onPressed logic here
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SearchPage(),
+                ),
+              );
             },
-            child: Icon(
-              Icons.search,
-            ),
+            child: Icon(Icons.search),
             heroTag: 'searchButton', // Assign a unique tag to the second FAB
           ),
         ],
