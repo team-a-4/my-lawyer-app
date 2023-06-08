@@ -45,6 +45,7 @@ dependencies:
   flutter_chat_bubble: ^2.0.2
   uuid: any
   skeletons: ^0.0.3
+  url_launcher: ^6.1.11
 
 dev_dependencies:
   flutter_test:
