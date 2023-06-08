@@ -234,7 +234,11 @@ class _ChatState extends State<Chat> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         title: const Text('Chat'),
+        centerTitle: true,
+        surfaceTintColor: Theme.of(context).colorScheme.surface,
+        backgroundColor: Theme.of(context).colorScheme.secondary,
       ),
       body: Column(
         children: [
@@ -253,6 +257,7 @@ class _ChatState extends State<Chat> {
                 if (sender == 'u') {
                   // User message
                   return ChatBubble(
+                    elevation: 0,
                     clipper: ChatBubbleClipper5(type: BubbleType.sendBubble),
                     alignment: Alignment.topRight,
                     margin: const EdgeInsets.only(top: 20, right: 10, left: 10),
@@ -281,12 +286,16 @@ class _ChatState extends State<Chat> {
                       ),
                     ),
                     ChatBubble(
+                        elevation: 0,
                         clipper:
                             ChatBubbleClipper5(type: BubbleType.receiverBubble),
                         alignment: Alignment.topLeft,
                         margin:
                             const EdgeInsets.only(top: 20, left: 32, right: 10),
-                        backGroundColor: Colors.grey[300],
+                        backGroundColor: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.1),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -300,8 +309,7 @@ class _ChatState extends State<Chat> {
                                     const TextSpan(
                                       text: '\nLean more about constitution:',
                                       style: TextStyle(
-                                        fontWeight: FontWeight.bold
-                                      ),
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   if (content.contains(
                                       'constitution')) // Conditionally include the "Constitution" text
@@ -470,8 +478,7 @@ class _ChatState extends State<Chat> {
             child: Row(
               children: [
                 //create a button with icon camera
-                IconButton(
-                    icon: const Icon(Icons.camera_alt), onPressed: () {}),
+
                 Expanded(
                   child: Card(
                     margin: const EdgeInsets.only(left: 2, right: 2, bottom: 8),
@@ -501,7 +508,7 @@ class _ChatState extends State<Chat> {
                   borderRadius: BorderRadius.circular(8.0),
                   child: widget.aiIsTyping == false
                       ? Container(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: Theme.of(context).colorScheme.secondary,
                           child: IconButton(
                             onPressed: () {
                               sendMessage(messageController.text);

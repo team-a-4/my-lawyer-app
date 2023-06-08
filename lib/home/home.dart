@@ -140,16 +140,19 @@ class HomeScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: laws.map((law) {
-            return CardButton(
-              title: law.title,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => law.screen,
-                  ),
-                );
-              },
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: CardButton(
+                title: law.title,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => law.screen,
+                    ),
+                  );
+                },
+              ),
             );
           }).toList(),
         ),
