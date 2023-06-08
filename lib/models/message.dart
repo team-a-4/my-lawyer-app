@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Action {
   String actionTitle;
   String actionUrl;
@@ -8,10 +10,26 @@ class Action {
   });
 }
 
+class TextController {}
+
+class Field {
+  String fieldTitle;
+  String fieldType;
+  TextEditingController textController;
+
+  Field({
+    required this.fieldTitle,
+    required this.fieldType,
+    required this.textController,
+  });
+}
+
 class Message {
   final String content;
   // i need to store a json object here
   Map<String, dynamic> json_data;
+  List<Action> actions = [];
+  List<Text> fields = [];
 
   Message({
     required this.content,
@@ -54,5 +72,17 @@ class Message {
       ));
     }
     return actions;
+  }
+
+  List<Field> getFormFields() {
+    List<Field> fields = [];
+    for (var field in json_data['form']['fields']) {
+      fields.add(Field(
+        fieldTitle: field[0],
+        fieldType: field[1],
+        textController: TextEditingController(),
+      ));
+    }
+    return fields;
   }
 }

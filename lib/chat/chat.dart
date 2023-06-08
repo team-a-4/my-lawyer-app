@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:http/http.dart' as http;
+import 'package:my_lawyer/constitution/constitution_nav.dart';
 import 'package:my_lawyer/models/message.dart';
 
 class Chat extends StatefulWidget {
@@ -52,6 +54,56 @@ class _ChatState extends State<Chat> {
       var headers = {'Content-Type': 'application/json'};
 
       var body = json.encode({'chatID': widget.chatID, "action": action});
+
+      // Send POST request
+      var response = await http.post(url, headers: headers, body: body);
+      // Get response status code
+      var statusCode = response.statusCode;
+
+      // Handle the response data
+      if (statusCode == 200) {
+        var responseData = json.decode(response.body);
+        var responseMessage = responseData['message'];
+
+        // Update the UI with the response message
+        setState(() {
+          // Add the AI's message to the list in front
+          responseMessage = 'a~$responseMessage';
+          Message _msg = Message(content: responseMessage);
+          _msg.json_data = responseData;
+          widget.messages.insert(0, _msg);
+        });
+      } else {
+        print('Request failed with status: $statusCode');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+
+    setState(() {
+      widget.aiIsTyping = false;
+    });
+  }
+
+  void submitForm(Message msg) async {
+    setState(() {
+      widget.aiIsTyping = true;
+    });
+
+    try {
+      // API endpoint URL
+      var url = Uri.parse(widget.BASE_API_URL + "form_filled");
+
+      // Request headers (if required)
+      var headers = {'Content-Type': 'application/json'};
+
+      var data = {};
+      for (var field in msg.json_data['form_data']['fields']) {
+        data[field['fieldTitle']] = field['textController'].text;
+      }
+
+      var body = json.encode(
+          {'chatID': widget.chatID, "data": data, "form_id": "mua_insurance"});
 
       // Send POST request
       var response = await http.post(url, headers: headers, body: body);
@@ -196,24 +248,23 @@ class _ChatState extends State<Chat> {
                   );
                 } else if (sender == 'a') {
                   // AI message
-                  return Stack(
-                    children: [
-                      const Positioned(
-                        top: 25,
-                        left: 7,
-                        child: CircleAvatar(
-                          radius: 10,
-                          backgroundColor: Color.fromARGB(255, 243, 33, 33),
-                          child: Text(
-                            'AI',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                            ),
+                  return Stack(children: [
+                    const Positioned(
+                      top: 25,
+                      left: 7,
+                      child: CircleAvatar(
+                        radius: 10,
+                        backgroundColor: Color.fromARGB(255, 243, 33, 33),
+                        child: Text(
+                          'AI',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
                           ),
                         ),
                       ),
-                      ChatBubble(
+                    ),
+                    ChatBubble(
                         clipper:
                             ChatBubbleClipper5(type: BubbleType.receiverBubble),
                         alignment: Alignment.topLeft,
@@ -223,14 +274,57 @@ class _ChatState extends State<Chat> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            for (var line
-                                in content.replaceAll('\\n', '\n').split('\n'))
-                              Text(line),
+                            RichText(
+                              text: TextSpan(
+                                text: content,
+                                style: DefaultTextStyle.of(context).style,
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: '\nLearn more on:',
+                                    style: TextStyle(
+                                      color: content.contains('constitution')
+                                          ? const Color.fromARGB(255, 0, 0, 0)
+                                          : null,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: '\n',
+                                  ),
+                                  TextSpan(
+                                    text: 'Constitution',
+                                    style: TextStyle(
+                                      color: content.contains('constitution')
+                                          ? Colors.blue
+                                          : null,
+                                      decoration:
+                                          content.contains('constitution')
+                                              ? TextDecoration.underline
+                                              : null,
+                                      decorationColor:
+                                          content.contains('constitution')
+                                              ? Colors.blue
+                                              : null,
+                                    ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ConstitutionHome()),
+                                        );
+                                      },
+                                  )
+                                ],
+                              ),
+                            ),
 
                             if (message.containsActions())
                               Text("\n${message.getActionTitle()}",
                                   style:
                                       TextStyle(fontWeight: FontWeight.bold)),
+
                             // render the buttons if the message is a question
                             if (message.containsActions())
                               Row(
@@ -254,14 +348,61 @@ class _ChatState extends State<Chat> {
                               ),
 
                             if (message.containsForm())
-                              Text("\n${message.getFormTitle()}",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text("\n${message.getFormTitle()}",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+
+                            if (message.containsForm())
+                              Form(
+                                child: Column(
+                                  children: [
+                                    for (var field in message.getFormFields())
+                                      // render the form fields
+                                      Card(
+                                        margin: EdgeInsets.only(
+                                            left: 2, right: 2, bottom: 8),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15.0),
+                                        ),
+                                        child: TextFormField(
+                                          // generate controller for each field
+                                          controller: field.textController,
+                                          keyboardType:
+                                              field.fieldType == 'number'
+                                                  ? TextInputType.number
+                                                  : TextInputType.text,
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText: field.fieldTitle,
+                                            contentPadding: EdgeInsets.only(
+                                              left: 15,
+                                              bottom: 12,
+                                              top: 15,
+                                              right: 15,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          if (widget.aiIsTyping) return;
+                                          submitForm(message);
+                                        },
+                                        child: const Text('Submit'),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                           ],
-                        ),
-                      ),
-                    ],
-                  );
+                        ))
+                  ]);
                 } else if (sender == 'l') {
                   // Lawyer message
                   return Stack(
