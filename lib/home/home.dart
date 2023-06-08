@@ -178,9 +178,11 @@ class CardButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0), // Set the desired height of the card
       child: Card(
-        elevation: 5,
-        shadowColor: const Color.fromARGB(255, 54, 98, 244),
-        color: Colors.white, // Set the background color of the card
+        elevation: 1,
+        shadowColor: Theme.of(context).colorScheme.scrim,
+        color: Theme.of(context)
+            .colorScheme
+            .surfaceVariant, // Set the background color of the card
         child: ListTile(
           contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
           title: Text(
