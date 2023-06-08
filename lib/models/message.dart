@@ -18,18 +18,33 @@ class Message {
     this.json_data = const {},
   });
 
+  bool containsForm() {
+    bool containsForm = false;
+    if (json_data.containsKey('form')) {
+      containsForm = true;
+    }
+    return containsForm;
+  }
+
   bool containsActions() {
-    print(json_data.containsKey('form_data'));
-    return json_data.containsKey('form_data');
+    bool containsActions = false;
+    if (json_data.containsKey('form_data')) {
+      if (json_data['form_data'].containsKey('actions')) {
+        containsActions = true;
+      }
+    }
+    return containsActions;
   }
 
   String getActionTitle() {
-    print(json_data['form_data']['title']);
     return json_data['form_data']['title'];
   }
 
-// form_data = {"title" : "Do you wish to fill a claim form?","actions":[{"data":"yes", "action":"fill_insurance_claim"},{"data":"no", "action":"cancel"}]}
+  String getFormTitle() {
+    return json_data['form']['title'];
+  }
 
+// form_data = {"title" : "Do you wish to fill a claim form?","actions":[{"data":"yes", "action":"fill_insurance_claim"},{"data":"no", "action":"cancel"}]}
   List<Action> getActionOptions() {
     List<Action> actions = [];
     for (var action in json_data['form_data']['actions']) {
