@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:my_lawyer/chat/chat.dart';
 import 'package:my_lawyer/constitution/constitution_nav.dart';
-import 'package:my_lawyer/home/widgets/card_button.dart';
 import 'package:my_lawyer/user.dart';
 import 'package:uuid/uuid.dart';
 
