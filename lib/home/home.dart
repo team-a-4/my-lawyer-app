@@ -178,17 +178,19 @@ class CardButton extends StatelessWidget {
     return Container(
       height: 100, // Set the desired height of the card
       child: Card(
-        color: Theme.of(context)
-            .colorScheme
-            .primary, // Set the background color of the card
+        elevation: 5,
+        shadowColor: const Color.fromARGB(255, 54, 98, 244),
+        color: Colors.white, // Set the background color of the card
         child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
           title: Text(
             title,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Color.fromARGB(255, 0, 0, 0),
               fontSize: 18, // Set the text color
             ),
+            textAlign: TextAlign.center,
           ),
           onTap: onTap,
         ),
