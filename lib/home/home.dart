@@ -176,8 +176,7 @@ class CardButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-          vertical: 8.0), // Set the desired height of the card
+      padding: const EdgeInsets.all(8.0), // Set the desired height of the card
       child: Card(
         elevation: 5,
         shadowColor: const Color.fromARGB(255, 54, 98, 244),

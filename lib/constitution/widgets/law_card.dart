@@ -14,8 +14,8 @@ class _LawCardState extends State<LawCard> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-          vertical: 8.0), // Adjust the vertical padding as needed
+      padding:
+          const EdgeInsets.all(8.0), // Adjust the vertical padding as needed
       child: SizedBox(
         height: 90, // Set the desired height of the card
         child: Card(
