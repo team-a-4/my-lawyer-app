@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_lawyer/constitution/law/c_law_details.dart';
 import 'package:my_lawyer/constitution/law_list_nav/law_list_nav.dart';
 import 'package:my_lawyer/home/widgets/card_button.dart';
 
