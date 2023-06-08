@@ -28,6 +28,8 @@ class Message {
   final String content;
   // i need to store a json object here
   Map<String, dynamic> json_data;
+  List<Action> actions = [];
+  List<Text> fields = [];
 
   Message({
     required this.content,
