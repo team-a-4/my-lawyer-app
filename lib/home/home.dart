@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:my_lawyer/chat.dart';
-import 'package:my_lawyer/constitution.dart';
-import 'package:my_lawyer/lawsScreen.dart';
+import 'package:my_lawyer/chat/chat.dart';
+import 'package:my_lawyer/constitution/constitution_home.dart';
+import 'package:my_lawyer/home/widgets/card_button.dart';
 
 class HomeScreen extends StatelessWidget {
-  final List<Law> laws = [
-    Law(
+  final List<LawSection> laws = [
+    LawSection(
       title: 'Constitution',
-      screen: const Constitution(),
+      screen: const ConstitutionHome(),
     ),
-    Law(
+    LawSection(
       title: 'Others',
-      screen: const Constitution(),
+      screen: const ConstitutionHome(),
     ),
   ];
+
+  HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +31,9 @@ class HomeScreen extends StatelessWidget {
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondary,
+              ),
               child: const Text(
                 'Menu',
                 style: TextStyle(
@@ -37,23 +41,19 @@ class HomeScreen extends StatelessWidget {
                   fontSize: 20,
                 ),
               ),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.secondary,
-              ),
             ),
             ListTile(
-              title: Text('Item 1'),
+              title: const Text('Item 1'),
               onTap: () {},
             ),
             ListTile(
-              title: Text('Item 2'),
+              title: const Text('Item 2'),
               onTap: () {},
             ),
             // Add more list tiles for additional menu items
           ],
         ),
       ),
-      
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -104,40 +104,9 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class Law {
+class LawSection {
   final String title;
   final Widget screen;
 
-  Law({required this.title, required this.screen});
-}
-
-class CardButton extends StatelessWidget {
-  final String title;
-  final VoidCallback onTap;
-
-  const CardButton({
-    required this.title,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 100, // Set the desired height of the card
-      child: Card(
-        color: Theme.of(context).colorScheme.primary, // Set the background color of the card
-        child: ListTile(
-          title: Text(
-            title,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              fontSize: 18, // Set the text color
-            ),
-          ),
-          onTap: onTap,
-        ),
-      ),
-    );
-  }
+  LawSection({required this.title, required this.screen});
 }

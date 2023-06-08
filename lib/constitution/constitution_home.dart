@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:my_lawyer/home.dart';
+import 'package:my_lawyer/constitution/law/law_details.dart';
+import 'package:my_lawyer/constitution/constitution_docs.dart';
+import 'package:my_lawyer/home/home.dart';
+import 'package:my_lawyer/home/widgets/card_button.dart';
 
-class Constitution extends StatelessWidget {
-  const Constitution({Key? key}) : super(key: key);
+class ConstitutionHome extends StatefulWidget {
+  const ConstitutionHome({super.key});
 
+  @override
+  State<ConstitutionHome> createState() => _ConstitutionHomeState();
+}
+
+class _ConstitutionHomeState extends State<ConstitutionHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Constitution',
+          'Constitutions',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -39,7 +47,9 @@ class Constitution extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => HomeScreen(),
+                          builder: (context) => const ConstitutionDocs(
+                              colName: "constitution_ch1",
+                              title: "Constitution 1"),
                         ),
                       );
                     },
@@ -50,7 +60,9 @@ class Constitution extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => HomeScreen(),
+                          builder: (context) => const ConstitutionDocs(
+                              colName: "constitution_ch2",
+                              title: "Constitution 2"),
                         ),
                       );
                     },
@@ -61,7 +73,9 @@ class Constitution extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => HomeScreen(),
+                          builder: (context) => const ConstitutionDocs(
+                              colName: "constitution_ch3",
+                              title: "Constitution 3"),
                         ),
                       );
                     },
@@ -72,29 +86,35 @@ class Constitution extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => HomeScreen(),
+                          builder: (context) => const ConstitutionDocs(
+                              colName: "constitution_ch4",
+                              title: "Constitution 4"),
                         ),
                       );
                     },
                   ),
                   CardButton(
-                    title: 'Constitution 5 pt 1',
+                    title: 'Constitution 5 Part 1',
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => HomeScreen(),
+                          builder: (context) => const ConstitutionDocs(
+                              colName: "constitution_ch5_p1",
+                              title: "Constitution 5 Part 1"),
                         ),
                       );
                     },
                   ),
                   CardButton(
-                    title: 'Constitution 5 pt 2',
+                    title: 'Constitution 5 Part 2',
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => HomeScreen(),
+                          builder: (context) => const ConstitutionDocs(
+                              colName: "constitution_ch5_p2",
+                              title: "Constitution 5 Part 2"),
                         ),
                       );
                     },
@@ -105,7 +125,9 @@ class Constitution extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => HomeScreen(),
+                          builder: (context) => const ConstitutionDocs(
+                              colName: "constitution_ch8",
+                              title: "Constitution 8"),
                         ),
                       );
                     },
@@ -114,36 +136,6 @@ class Constitution extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class CardButton extends StatelessWidget {
-  final String title;
-  final VoidCallback onTap;
-  const CardButton({
-    Key? key,
-    required this.title,
-    required this.onTap,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Card(
-        color: Theme.of(context).colorScheme.primary,
-        child: ListTile(
-          title: Text(
-            title,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              fontSize: 15,
-            ),
-          ),
-          onTap: onTap,
         ),
       ),
     );
