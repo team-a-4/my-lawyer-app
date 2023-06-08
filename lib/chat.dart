@@ -50,6 +50,20 @@ class _ChatState extends State<Chat> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    // load the messages
+    FirebaseFirestore.instance
+        .collection("chat")
+        .doc(docID)
+        .get()
+        .then((value) {
+      if (value.exists) {
+        // if message array is empty delete document
+        if (value.data()!['messages'].isEmpty) {
+          FirebaseFirestore.instance.collection("chat").doc(docID).delete();
+        }
+      }
+    });
+
     _animationController.dispose();
     super.dispose();
   }
@@ -109,8 +123,10 @@ class _ChatState extends State<Chat> with TickerProviderStateMixin {
                             clipper:
                                 ChatBubbleClipper5(type: BubbleType.sendBubble),
                             alignment: Alignment.topRight,
-                            margin: const EdgeInsets.only(top: 20, right: 10,left:10),
-                            backGroundColor: Theme.of(context).colorScheme.primary,
+                            margin: const EdgeInsets.only(
+                                top: 20, right: 10, left: 10),
+                            backGroundColor:
+                                Theme.of(context).colorScheme.primary,
                             child: Text(
                               content,
                               style: const TextStyle(color: Colors.white),
@@ -140,8 +156,8 @@ class _ChatState extends State<Chat> with TickerProviderStateMixin {
                                 clipper: ChatBubbleClipper5(
                                     type: BubbleType.receiverBubble),
                                 alignment: Alignment.topLeft,
-                                margin:
-                                    const EdgeInsets.only(top: 20, left: 32,right: 10),
+                                margin: const EdgeInsets.only(
+                                    top: 20, left: 32, right: 10),
                                 backGroundColor: Colors.grey[300],
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,

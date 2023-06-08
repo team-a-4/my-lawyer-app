@@ -4,6 +4,7 @@ import 'package:my_lawyer/chat.dart';
 import 'package:my_lawyer/constitution.dart';
 import 'package:my_lawyer/lawsScreen.dart';
 import 'package:my_lawyer/user.dart';
+import 'package:uuid/uuid.dart';
 
 class HomeScreen extends StatelessWidget {
   final List<Law> laws = [
@@ -79,7 +80,9 @@ class HomeScreen extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => Chat( docID: docID,),
+                              builder: (context) => Chat(
+                                docID: docID,
+                              ),
                             ),
                           );
                         },
@@ -97,12 +100,22 @@ class HomeScreen extends StatelessWidget {
         children: [
           FloatingActionButton(
             onPressed: () {
+              // create new document in chat collection with auto generated id
+              var uuid = Uuid();
+              var id = 'X' + uuid.v4().replaceAll('-', '').substring(0, 19);
+
+              FirebaseFirestore.instance.collection('chat').doc(id).set({
+                'uid': currentId,
+                'messages': [],
+              });
+
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Chat(docID: '',),
+                  builder: (context) => Chat(docID: id),
                 ),
               );
+              print('docid:$id');
             },
             child: Icon(
               Icons.support_agent,
