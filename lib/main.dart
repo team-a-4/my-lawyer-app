@@ -33,9 +33,7 @@ void main() async {
           ),
           useMaterial3: true,
         ),
-        
       );
-      
     },
   ));
 }
@@ -230,36 +228,8 @@ class _MyAppState extends State<MyApp> {
     ];
     return Scaffold(
       body: Center(
-        child: listOfAnimations[Random().nextInt(listOfAnimations.length)].widget,
-      ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Chat(),
-                ),
-              );
-            },
-            child: Icon(
-              Icons.support_agent,
-            ),
-            heroTag: 'chatButton', // Assign a unique tag to the first FAB
-          ),
-          SizedBox(height: 16.0), // Add spacing between the buttons
-          FloatingActionButton(
-            onPressed: () {
-              // Add your onPressed logic here
-            },
-            child: Icon(
-              Icons.search,
-            ),
-            heroTag: 'searchButton', // Assign a unique tag to the second FAB
-          ),
-        ],
+        child:
+            listOfAnimations[Random().nextInt(listOfAnimations.length)].widget,
       ),
     );
   }
