@@ -13,5 +13,8 @@ String getCurrentUserID() {
   return '';
 }
 
-// Assign the current user's ID to the 'currentId' variable
+// Assign the current user's ID to the 'currentId' variable and get a shorter version
 String currentId = getCurrentUserID();
+String shortenedId = currentId.substring(0, 24); // Extract the first 8 characters
+
+

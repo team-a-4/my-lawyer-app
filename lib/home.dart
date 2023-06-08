@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:my_lawyer/chat.dart';
 import 'package:my_lawyer/constitution.dart';
 import 'package:my_lawyer/lawsScreen.dart';
+import 'package:my_lawyer/user.dart';
 
 class HomeScreen extends StatelessWidget {
   final List<Law> laws = [
@@ -30,30 +31,67 @@ class HomeScreen extends StatelessWidget {
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
-              child: const Text(
-                'Menu',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'History',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 40,
+                    ),
+                  ),
+                  Text(
+                    'Uid:$shortenedId',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
               ),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.secondary,
               ),
             ),
-            ListTile(
-              title: Text('Item 1'),
-              onTap: () {},
+            FutureBuilder<QuerySnapshot>(
+              future: FirebaseFirestore.instance
+                  .collection('chat')
+                  .where('uid', isEqualTo: currentId)
+                  .get(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text('');
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  final docs = snapshot.data!.docs;
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: docs.length,
+                    itemBuilder: (context, index) {
+                      final doc = docs[index];
+                      final docID = doc.id;
+
+                      return ListTile(
+                        title: Text(docID),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Chat( docID: docID,),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  );
+                }
+              },
             ),
-            ListTile(
-              title: Text('Item 2'),
-              onTap: () {},
-            ),
-            // Add more list tiles for additional menu items
           ],
         ),
       ),
-      
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -62,7 +100,7 @@ class HomeScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Chat(),
+                  builder: (context) => Chat(docID: '',),
                 ),
               );
             },
@@ -125,7 +163,9 @@ class CardButton extends StatelessWidget {
     return Container(
       height: 100, // Set the desired height of the card
       child: Card(
-        color: Theme.of(context).colorScheme.primary, // Set the background color of the card
+        color: Theme.of(context)
+            .colorScheme
+            .primary, // Set the background color of the card
         child: ListTile(
           title: Text(
             title,

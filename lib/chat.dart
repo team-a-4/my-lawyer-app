@@ -5,14 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_lawyer/user.dart';
+
 class Chat extends StatefulWidget {
-  const Chat({Key? key}) : super(key: key);
+  String docID;
+  Chat({Key? key, required this.docID}) : super(key: key);
 
   @override
-  State<Chat> createState() => _ChatState();
+  State<Chat> createState() => _ChatState(docID);
 }
 
 class _ChatState extends State<Chat> with TickerProviderStateMixin {
+  final String docID;
+  _ChatState(this.docID);
   String buttonText = 'U';
   Color buttonColor = Color.fromARGB(255, 33, 33, 243);
   final messageController = TextEditingController();
