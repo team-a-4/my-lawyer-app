@@ -1,44 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:my_lawyer/models/law.dart';
 
-class ConstitutionDocs extends StatefulWidget {
+class ConstitutionLawList extends StatefulWidget {
   final String title;
   final String colName;
 
-  const ConstitutionDocs(
+  const ConstitutionLawList(
       {super.key, required this.colName, required this.title});
 
   @override
-  State<ConstitutionDocs> createState() => _ConstitutionDocsState();
+  State<ConstitutionLawList> createState() => _ConstitutionLawListState();
 }
 
-class _ConstitutionDocsState extends State<ConstitutionDocs> {
-  void fetchConstitutionData() async {
+class _ConstitutionLawListState extends State<ConstitutionLawList> {
+  void fetchConstitutionData() {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
-
     firestore
         .collection(widget.colName)
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((DocumentSnapshot document) {
-        // Access the data of each document
         Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
+        String docId = document.id;
 
-        // Retrieve the information array
         List<dynamic> information = data!['information'];
+        List<String> infoStrings =
+            information.map((dynamic item) => item.toString()).toList();
 
-        print(information);
+        Law law = Law(id: docId, info: infoStrings);
       });
-    }).catchError((error) {
-      print('Error getting documents: $error');
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
-      body: const Text("Will display all laws cards here"),
-    );
+    return Container();
   }
 }
