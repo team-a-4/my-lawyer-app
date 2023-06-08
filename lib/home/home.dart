@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:my_lawyer/chat/chat.dart';
 import 'package:my_lawyer/constitution/constitution_nav.dart';
+import 'package:my_lawyer/home/widgets/card_button.dart';
 import 'package:my_lawyer/home/search.dart';
 
 import 'package:my_lawyer/user.dart';
@@ -162,39 +163,4 @@ class Law {
   final Widget screen;
 
   Law({required this.title, required this.screen});
-}
-
-class CardButton extends StatelessWidget {
-  final String title;
-  final VoidCallback onTap;
-
-  const CardButton({
-    required this.title,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0), // Set the desired height of the card
-      child: Card(
-        elevation: 5,
-        shadowColor: const Color.fromARGB(255, 54, 98, 244),
-        color: Colors.white, // Set the background color of the card
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
-          title: Text(
-            title,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Color.fromARGB(255, 0, 0, 0),
-              fontSize: 18, // Set the text color
-            ),
-            textAlign: TextAlign.center,
-          ),
-          onTap: onTap,
-        ),
-      ),
-    );
-  }
 }
