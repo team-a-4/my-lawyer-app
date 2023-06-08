@@ -327,7 +327,7 @@ class _ChatState extends State<Chat> with TickerProviderStateMixin {
       var response = await http.post(url, headers: headers, body: body);
       // Get response status code
       var statusCode = response.statusCode;
-      print('Response Status Code: $statusCode');
+      print(response.body);
 
       // Handle the response data
       if (statusCode == 200) {
