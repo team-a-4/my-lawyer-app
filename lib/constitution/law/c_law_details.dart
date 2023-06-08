@@ -1,16 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:my_lawyer/_lawswwww.dart';
 import 'package:my_lawyer/chat/chat.dart';
-import 'package:my_lawyer/models/law.dart';
 import 'package:my_lawyer/user.dart';
 import 'package:uuid/uuid.dart';
 
 class ConstitutionLawDetails extends StatefulWidget {
-  ConstitutionLawDetails({Key? key}) : super(key: key);
+  final String title;
+  final List<String> info;
 
-  // final Law currentLaw = docId.info.toList();
-  final List<String> currentLaw = docId.info.toList();
+  ConstitutionLawDetails({super.key, required this.title, required this.info});
+
+  final List<String> currentLaw = [];
   final List<String> trimmedLaw = [];
 
   @override
@@ -21,6 +21,7 @@ class _ConstitutionLawDetailsState extends State<ConstitutionLawDetails> {
   @override
   void initState() {
     super.initState();
+    widget.currentLaw.addAll(widget.info);
     widget.trimmedLaw.clear();
   }
 
@@ -28,8 +29,8 @@ class _ConstitutionLawDetailsState extends State<ConstitutionLawDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Text("Protection to right",
-              style: TextStyle(fontWeight: FontWeight.bold))),
+          title: Text(widget.title,
+              style: const TextStyle(fontWeight: FontWeight.bold))),
       body: SingleChildScrollView(
         child: Column(
           children: [
