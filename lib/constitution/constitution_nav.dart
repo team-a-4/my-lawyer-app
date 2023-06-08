@@ -41,18 +41,6 @@ class _ConstitutionHomeState extends State<ConstitutionHome> {
               child: Column(
                 children: [
                   CardButton(
-                    // This one is to test
-                    title: 'Law details',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ConstitutionLawDetails(),
-                        ),
-                      );
-                    },
-                  ),
-                  CardButton(
                     title: 'Constitution 1',
                     onTap: () {
                       Navigator.push(

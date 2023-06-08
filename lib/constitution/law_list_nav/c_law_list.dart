@@ -55,10 +55,7 @@ class _ConstitutionLawListState extends State<ConstitutionLawList> {
           return ListView.builder(
             itemCount: laws.length,
             itemBuilder: (context, index) {
-              return LawCard(
-                title: laws[index].id,
-                onTap: () {},
-              );
+              return LawCard(title: laws[index].id, info: laws[index].info);
             },
           );
         } else {

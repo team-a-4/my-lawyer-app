@@ -15,7 +15,15 @@ class HomeScreen extends StatelessWidget {
       screen: const ConstitutionHome(),
     ),
     Law(
-      title: 'Others',
+      title: 'Accident Procedures',
+      screen: const ConstitutionHome(),
+    ),
+    Law(
+      title: 'Fines',
+      screen: const ConstitutionHome(),
+    ),
+    Law(
+      title: 'Emergency Contacts',
       screen: const ConstitutionHome(),
     ),
   ];
