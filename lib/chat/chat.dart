@@ -7,9 +7,10 @@ import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_lawyer/constitution/constitution_nav.dart';
 import 'package:my_lawyer/models/message.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Chat extends StatefulWidget {
-  Chat({super.key, required this.chatID});
+  Chat({key, required this.chatID});
 
   final BASE_API_URL = 'https://my-lawyer-api.sarwin.repl.co/';
 
@@ -23,6 +24,15 @@ class Chat extends StatefulWidget {
 
 class _ChatState extends State<Chat> {
   final messageController = TextEditingController();
+
+  Future<void> _launchInBrowser(Uri url) async {
+    if (!await launchUrl(
+      url,
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw Exception('Could not launch $url');
+    }
+  }
 
   // load the messages from the database
   void loadMessages() async {
@@ -71,6 +81,20 @@ class _ChatState extends State<Chat> {
           responseMessage = 'a~$responseMessage';
           Message _msg = Message(content: responseMessage);
           _msg.json_data = responseData;
+
+          if (_msg.containsForm()) {
+            for (var field in _msg.getFormFields()) {
+              print(field);
+              _msg.fields.add(
+                Field(
+                  fieldTitle: field.fieldTitle,
+                  fieldType: field.fieldType,
+                  textController: TextEditingController(),
+                ),
+              );
+            }
+          }
+
           widget.messages.insert(0, _msg);
         });
       } else {
@@ -98,8 +122,9 @@ class _ChatState extends State<Chat> {
       var headers = {'Content-Type': 'application/json'};
 
       var data = {};
-      for (var field in msg.json_data['form_data']['fields']) {
-        data[field['fieldTitle']] = field['textController'].text;
+      for (var field in msg.fields) {
+        data[field.fieldTitle] = field.textController.text;
+        field.textController.text = field.textController.text;
       }
 
       var body = json.encode(
@@ -121,6 +146,7 @@ class _ChatState extends State<Chat> {
           responseMessage = 'a~$responseMessage';
           Message _msg = Message(content: responseMessage);
           _msg.json_data = responseData;
+
           widget.messages.insert(0, _msg);
         });
       } else {
@@ -167,10 +193,10 @@ class _ChatState extends State<Chat> {
       });
 
       // Send POST request
+
       var response = await http.post(url, headers: headers, body: body);
       // Get response status code
       var statusCode = response.statusCode;
-      print(response.body);
 
       // Handle the response data
       if (statusCode == 200) {
@@ -209,16 +235,6 @@ class _ChatState extends State<Chat> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chat'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                //showButtons = !showButtons;
-              });
-            },
-            icon: const Icon(Icons.more_vert),
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -279,43 +295,33 @@ class _ChatState extends State<Chat> {
                                 text: content,
                                 style: DefaultTextStyle.of(context).style,
                                 children: <TextSpan>[
-                                  TextSpan(
-                                    text: '\nLearn more on:',
-                                    style: TextStyle(
-                                      color: content.contains('constitution')
-                                          ? const Color.fromARGB(255, 0, 0, 0)
-                                          : null,
-                                      fontWeight: FontWeight.bold,
+                                  if (content.contains(
+                                      'constitution')) // Conditionally include the "Constitution" text
+                                    const TextSpan(
+                                      text: '\nLean more about constitution:',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold
+                                      ),
                                     ),
-                                  ),
-                                  TextSpan(
-                                    text: '\n',
-                                  ),
-                                  TextSpan(
-                                    text: 'Constitution',
-                                    style: TextStyle(
-                                      color: content.contains('constitution')
-                                          ? Colors.blue
-                                          : null,
-                                      decoration:
-                                          content.contains('constitution')
-                                              ? TextDecoration.underline
-                                              : null,
-                                      decorationColor:
-                                          content.contains('constitution')
-                                              ? Colors.blue
-                                              : null,
+                                  if (content.contains(
+                                      'constitution')) // Conditionally include the "Constitution" text
+                                    TextSpan(
+                                      text: '\nConstitution',
+                                      style: TextStyle(
+                                        color: Colors.blue,
+                                        decoration: TextDecoration.underline,
+                                        decorationColor: Colors.blue,
+                                      ),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ConstitutionHome()),
+                                          );
+                                        },
                                     ),
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ConstitutionHome()),
-                                        );
-                                      },
-                                  )
                                 ],
                               ),
                             ),
@@ -359,7 +365,7 @@ class _ChatState extends State<Chat> {
                               Form(
                                 child: Column(
                                   children: [
-                                    for (var field in message.getFormFields())
+                                    for (var field in message.fields)
                                       // render the form fields
                                       Card(
                                         margin: EdgeInsets.only(
@@ -398,6 +404,20 @@ class _ChatState extends State<Chat> {
                                       ),
                                     ),
                                   ],
+                                ),
+                              ),
+
+                            // if the message contains a link render it
+                            if (message.containLinks())
+                              GestureDetector(
+                                onTap: () => _launchInBrowser(
+                                    Uri.parse(message.getLink())),
+                                child: Text(
+                                  'Click here to open the link',
+                                  style: TextStyle(
+                                    decoration: TextDecoration.underline,
+                                    color: Colors.blue,
+                                  ),
                                 ),
                               ),
                           ],
@@ -449,6 +469,9 @@ class _ChatState extends State<Chat> {
             padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
             child: Row(
               children: [
+                //create a button with icon camera
+                IconButton(
+                    icon: const Icon(Icons.camera_alt), onPressed: () {}),
                 Expanded(
                   child: Card(
                     margin: const EdgeInsets.only(left: 2, right: 2, bottom: 8),
