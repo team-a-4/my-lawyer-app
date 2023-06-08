@@ -24,12 +24,23 @@ class Field {
   });
 }
 
+//
+//
+///
+////
+////
+/////
+////
+////
+////
+////
+////
+////
+
 class Message {
   final String content;
-  // i need to store a json object here
   Map<String, dynamic> json_data;
-  List<Action> actions = [];
-  List<Text> fields = [];
+  List<Field> fields = [];
 
   Message({
     required this.content,
@@ -41,6 +52,7 @@ class Message {
     if (json_data.containsKey('form')) {
       containsForm = true;
     }
+    print(containsForm);
     return containsForm;
   }
 
@@ -52,6 +64,18 @@ class Message {
       }
     }
     return containsActions;
+  }
+
+  bool containLinks() {
+    bool containsLinks = false;
+    if (json_data.containsKey('link')) {
+      containsLinks = true;
+    }
+    return containsLinks;
+  }
+
+  String getLink() {
+    return json_data['link'];
   }
 
   String getActionTitle() {
