@@ -5,7 +5,8 @@ import 'package:my_lawyer/models/law.dart';
 class ConstitutionLawDetails extends StatefulWidget {
   ConstitutionLawDetails({Key? key}) : super(key: key);
 
-  final Law currentLaw = docId;
+  // final Law currentLaw = docId.info.toList();
+  final List<String> currentLaw = docId.info.toList();
   final List<String> trimmedLaw = [];
 
   @override
@@ -13,20 +14,10 @@ class ConstitutionLawDetails extends StatefulWidget {
 }
 
 class _ConstitutionLawDetailsState extends State<ConstitutionLawDetails> {
-  void checkIdentationLevel() {
+  @override
+  void initState() {
+    super.initState();
     widget.trimmedLaw.clear();
-
-    for (int i = 0; i < widget.currentLaw.info.length; i++) {
-      if (widget.currentLaw.info[i].startsWith("~~")) {
-        widget.trimmedLaw.add(widget.currentLaw.info[i].substring(2));
-      } else if (widget.currentLaw.info[i].startsWith("~")) {
-        widget.trimmedLaw.add(widget.currentLaw.info[i].substring(1));
-      } else if (widget.currentLaw.info[i].startsWith("=")) {
-        widget.trimmedLaw.add(widget.currentLaw.info[i].substring(1));
-      } else {
-        widget.trimmedLaw.add(widget.currentLaw.info[i]);
-      }
-    }
   }
 
   @override
@@ -41,10 +32,9 @@ class _ConstitutionLawDetailsState extends State<ConstitutionLawDetails> {
               ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: widget.currentLaw.info.length,
+                itemCount: widget.currentLaw.length,
                 itemBuilder: (context, index) {
-                  checkIdentationLevel();
-                  return indentation0(widget.trimmedLaw[index]);
+                  return indentations(widget.currentLaw[index], index);
                 },
               ),
             ],
@@ -59,5 +49,31 @@ class _ConstitutionLawDetailsState extends State<ConstitutionLawDetails> {
           msg,
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ));
+  }
+
+  Padding indentations(String msg, int i) {
+    TextStyle textStyle;
+
+    if (msg.startsWith("~~")) {
+      textStyle = const TextStyle(fontSize: 10, fontWeight: FontWeight.bold);
+      widget.trimmedLaw.add(widget.currentLaw[i].substring(2));
+    } else if (msg.startsWith("~")) {
+      textStyle = const TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
+      widget.trimmedLaw.add(widget.currentLaw[i].substring(1));
+    } else if (msg.startsWith("=")) {
+      textStyle = const TextStyle(fontSize: 5, fontWeight: FontWeight.bold);
+      widget.trimmedLaw.add(widget.currentLaw[i].substring(1));
+    } else {
+      textStyle = const TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
+      widget.trimmedLaw.add(widget.currentLaw[i]);
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        widget.trimmedLaw[i],
+        style: textStyle,
+      ),
+    );
   }
 }
