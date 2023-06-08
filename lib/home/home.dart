@@ -56,9 +56,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             FutureBuilder<QuerySnapshot>(
-              future: FirebaseFirestore.instance
-                  .collection('chat')
-                  .get(),
+              future: FirebaseFirestore.instance.collection('chat').get(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Text('');
@@ -80,7 +78,7 @@ class HomeScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => Chat(
-                                docID: docID,
+                                chatID: docID,
                               ),
                             ),
                           );
@@ -111,7 +109,7 @@ class HomeScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Chat(docID: id),
+                  builder: (context) => Chat(chatID: id),
                 ),
               );
               print('docid:$id');
