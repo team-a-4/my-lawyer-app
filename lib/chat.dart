@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:my_lawyer/user.dart';
 class Chat extends StatefulWidget {
   const Chat({Key? key}) : super(key: key);
 
@@ -23,6 +23,7 @@ class _ChatState extends State<Chat> with TickerProviderStateMixin {
   String message_ = '';
   var chatDocId;
   List<String> chatMessages = []; // List to store chat messages
+  bool isChatDocCreated = false; // Variable to track if chat document is created
 
   @override
   void initState() {
@@ -231,59 +232,64 @@ class _ChatState extends State<Chat> with TickerProviderStateMixin {
   }
 
   void sendMessage(String msg) async {
-  if (msg.isEmpty) return;
+    if (msg.isEmpty) return;
 
-  try {
-    // API endpoint URL
-    var url = Uri.parse('https://my-lawyer-api.sarwin.repl.co/message');
+    try {
+      // API endpoint URL
+      var url = Uri.parse('https://my-lawyer-api.sarwin.repl.co/message');
 
-    // Request headers (if required)
-    var headers = {'Content-Type': 'application/json'};
+      // Request headers (if required)
+      var headers = {'Content-Type': 'application/json'};
 
-    // Request body
-    var body = json.encode({
-      'chatID': 'TESTING',
-      'message': msg,
-      'debug': 'true',
-    });
-
-    // Send POST request
-    var response = await http.post(url, headers: headers, body: body);
-    // Get response status code
-    var statusCode = response.statusCode;
-    print('Response Status Code: $statusCode');
-
-    // Handle the response data
-    if (statusCode == 200) {
-      var responseData = json.decode(response.body);
-      var responseMessage = responseData['message'];
-
-      // Create a new document in the "chat" collection
-    
-        // Create a new document in the "chat" collection
-        var newDocRef = await FirebaseFirestore.instance.collection("chat").add({
-          'messages': ['u-$msg'],
-        });
-        chatDocId = newDocRef.id; // Store the document ID for future use
-     
-
-      // Update the UI with the response message
-      setState(() {
-        // Update the message_ variable with the new message text
-        message_ = msg;
-
-        // Add the response message to the chatMessages list
-        chatMessages.add(responseMessage);
+      // Request body
+      var body = json.encode({
+        'chatID': 'TESTING',
+        'message': msg,
+        'debug': 'true',
       });
 
-      // Clear the TextEditingController
-      messageController.clear();
-    } else {
-      print('Request failed with status: $statusCode');
-    }
-  } catch (e) {
-    print('Error: $e');
-  }
-}
+      // Send POST request
+      var response = await http.post(url, headers: headers, body: body);
+      // Get response status code
+      var statusCode = response.statusCode;
+      print('Response Status Code: $statusCode');
 
+      // Handle the response data
+      if (statusCode == 200) {
+        var responseData = json.decode(response.body);
+        var responseMessage = responseData['message'];
+
+        if (!isChatDocCreated) {
+          // Create a new document in the "chat" collection
+          var newDocRef = await FirebaseFirestore.instance.collection("chat").add({
+            'messages': ['u-$msg'],
+            'uid':currentId
+          });
+          chatDocId = newDocRef.id; // Store the document ID for future use
+          isChatDocCreated = true;
+        } else {
+          // Update the existing document in the "chat" collection
+          await FirebaseFirestore.instance.collection("chat").doc(chatDocId).update({
+            'messages': FieldValue.arrayUnion(['u-$msg']),
+          });
+        }
+
+        // Update the UI with the response message
+        setState(() {
+          // Update the message_ variable with the new message text
+          message_ = msg;
+
+          // Add the response message to the chatMessages list
+          chatMessages.add(responseMessage);
+        });
+
+        // Clear the TextEditingController
+        messageController.clear();
+      } else {
+        print('Request failed with status: $statusCode');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 }
