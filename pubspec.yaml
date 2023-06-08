@@ -44,6 +44,7 @@ dependencies:
   dynamic_color: ^1.6.5
   flutter_chat_bubble: ^2.0.2
   uuid: any
+  skeletons: ^0.0.3
 
 dev_dependencies:
   flutter_test:
