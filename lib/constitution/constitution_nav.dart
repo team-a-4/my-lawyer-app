@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_lawyer/constitution/law_list_nav/c_law_list.dart';
+import 'package:my_lawyer/constitution/law_list_nav/law_list_nav.dart';
 import 'package:my_lawyer/home/widgets/card_button.dart';
 
 class ConstitutionHome extends StatefulWidget {
@@ -45,7 +46,7 @@ class _ConstitutionHomeState extends State<ConstitutionHome> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ConstitutionLawList(
+                          builder: (context) => const LawListNav(
                               colName: "constitution_ch1",
                               title: "Constitution 1"),
                         ),
@@ -58,7 +59,7 @@ class _ConstitutionHomeState extends State<ConstitutionHome> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ConstitutionLawList(
+                          builder: (context) => const LawListNav(
                               colName: "constitution_ch2",
                               title: "Constitution 2"),
                         ),
@@ -71,7 +72,7 @@ class _ConstitutionHomeState extends State<ConstitutionHome> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ConstitutionLawList(
+                          builder: (context) => const LawListNav(
                               colName: "constitution_ch3",
                               title: "Constitution 3"),
                         ),
@@ -84,7 +85,7 @@ class _ConstitutionHomeState extends State<ConstitutionHome> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ConstitutionLawList(
+                          builder: (context) => const LawListNav(
                               colName: "constitution_ch4",
                               title: "Constitution 4"),
                         ),
@@ -97,7 +98,7 @@ class _ConstitutionHomeState extends State<ConstitutionHome> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ConstitutionLawList(
+                          builder: (context) => const LawListNav(
                               colName: "constitution_ch5_p1",
                               title: "Constitution 5 Part 1"),
                         ),
@@ -110,7 +111,7 @@ class _ConstitutionHomeState extends State<ConstitutionHome> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ConstitutionLawList(
+                          builder: (context) => const LawListNav(
                               colName: "constitution_ch5_p2",
                               title: "Constitution 5 Part 2"),
                         ),
@@ -123,7 +124,7 @@ class _ConstitutionHomeState extends State<ConstitutionHome> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ConstitutionLawList(
+                          builder: (context) => const LawListNav(
                               colName: "constitution_ch8",
                               title: "Constitution 8"),
                         ),
