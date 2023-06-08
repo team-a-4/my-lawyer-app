@@ -27,7 +27,8 @@ class _ChatState extends State<Chat> with TickerProviderStateMixin {
   String message_ = '';
   var chatDocId;
   List<String> chatMessages = []; // List to store chat messages
-  bool isChatDocCreated = false; // Variable to track if chat document is created
+  bool isChatDocCreated =
+      false; // Variable to track if chat document is created
 
   @override
   void initState() {
@@ -56,10 +57,8 @@ class _ChatState extends State<Chat> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-      stream: FirebaseFirestore.instance
-          .collection("chat")
-          .doc(chatDocId)
-          .snapshots(),
+      stream:
+          FirebaseFirestore.instance.collection("chat").doc(docID).snapshots(),
       builder: (BuildContext context,
           AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
         try {
@@ -95,22 +94,30 @@ class _ChatState extends State<Chat> with TickerProviderStateMixin {
                   Expanded(
                     child: ListView.builder(
                       reverse: true,
-                      itemCount: chatMessages.length,
+                      itemCount: snapshot.data!.data()!['messages'].length,
                       itemBuilder: (context, index) {
-                        var message = chatMessages[index];
-                        if (index == chatMessages.length - 1) {
+                        var message = snapshot.data!.data()!['messages'][index];
+
+                        // Split the message into the sender and the actual message content
+                        var splitMessage = message.split('~');
+                        var sender = splitMessage[0];
+                        var content = splitMessage[1];
+
+                        if (sender == 'u') {
+                          // User message
                           return ChatBubble(
                             clipper:
                                 ChatBubbleClipper5(type: BubbleType.sendBubble),
                             alignment: Alignment.topRight,
-                            margin: const EdgeInsets.only(top: 20, right: 10),
-                            backGroundColor: Colors.blue,
+                            margin: const EdgeInsets.only(top: 20, right: 10,left:10),
+                            backGroundColor: Theme.of(context).colorScheme.primary,
                             child: Text(
-                              message_,
+                              content,
                               style: const TextStyle(color: Colors.white),
                             ),
                           );
-                        } else {
+                        } else if (sender == 'a') {
+                          // AI message
                           return Stack(
                             children: [
                               const Positioned(
@@ -134,12 +141,60 @@ class _ChatState extends State<Chat> with TickerProviderStateMixin {
                                     type: BubbleType.receiverBubble),
                                 alignment: Alignment.topLeft,
                                 margin:
-                                    const EdgeInsets.only(top: 20, left: 32),
+                                    const EdgeInsets.only(top: 20, left: 32,right: 10),
                                 backGroundColor: Colors.grey[300],
-                                child: Text(message),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    for (var line in content
+                                        .replaceAll('\\n', '\n')
+                                        .split('\n'))
+                                      Text(line),
+                                  ],
+                                ),
                               ),
                             ],
                           );
+                        } else if (sender == 'l') {
+                          // Lawyer message
+                          return Stack(
+                            children: [
+                              const Positioned(
+                                top: 25,
+                                left: 7,
+                                child: CircleAvatar(
+                                  radius: 10,
+                                  backgroundColor: Colors.green,
+                                  child: Text(
+                                    'L',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              ChatBubble(
+                                clipper: ChatBubbleClipper5(
+                                    type: BubbleType.receiverBubble),
+                                alignment: Alignment.topLeft,
+                                margin:
+                                    const EdgeInsets.only(top: 20, left: 32),
+                                backGroundColor: Colors.grey[300],
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    for (var line in content
+                                        .replaceAll('\\n', '\n')
+                                        .split('\n'))
+                                      Text(line),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
+                        } else {
+                          return Container(); // Unknown sender, return an empty container
                         }
                       },
                     ),
@@ -265,15 +320,19 @@ class _ChatState extends State<Chat> with TickerProviderStateMixin {
 
         if (!isChatDocCreated) {
           // Create a new document in the "chat" collection
-          var newDocRef = await FirebaseFirestore.instance.collection("chat").add({
+          var newDocRef =
+              await FirebaseFirestore.instance.collection("chat").add({
             'messages': ['u-$msg'],
-            'uid':currentId
+            'uid': currentId
           });
           chatDocId = newDocRef.id; // Store the document ID for future use
           isChatDocCreated = true;
         } else {
           // Update the existing document in the "chat" collection
-          await FirebaseFirestore.instance.collection("chat").doc(chatDocId).update({
+          await FirebaseFirestore.instance
+              .collection("chat")
+              .doc(chatDocId)
+              .update({
             'messages': FieldValue.arrayUnion(['u-$msg']),
           });
         }
