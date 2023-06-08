@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:my_lawyer/accident_procedures/accident_nav.dart';
 import 'package:my_lawyer/chat/chat.dart';
 import 'package:my_lawyer/constitution/constitution_nav.dart';
 import 'package:my_lawyer/home/widgets/card_button.dart';
@@ -16,7 +17,7 @@ class HomeScreen extends StatelessWidget {
     ),
     Law(
       title: 'Accident Procedures',
-      screen: const ConstitutionHome(),
+      screen: const AccidentHome(colName: "accidentProcedure"),
     ),
     Law(
       title: 'Fines',
