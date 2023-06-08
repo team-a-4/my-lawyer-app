@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:my_lawyer/chat.dart';
+import 'package:my_lawyer/chat/chat.dart';
 import 'package:my_lawyer/constitution.dart';
-import 'package:my_lawyer/lawsScreen.dart';
 import 'package:my_lawyer/user.dart';
 import 'package:uuid/uuid.dart';
 

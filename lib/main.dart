@@ -5,9 +5,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:my_lawyer/chat.dart';
+import 'package:my_lawyer/chat/chat.dart';
 
-import 'home.dart';
+import 'home/home.dart';
 
 const double _kSize = 100;
 
