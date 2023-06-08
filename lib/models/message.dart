@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Action {
   String actionTitle;
   String actionUrl;
@@ -5,6 +7,20 @@ class Action {
   Action({
     required this.actionTitle,
     required this.actionUrl,
+  });
+}
+
+class TextController {}
+
+class Field {
+  String fieldTitle;
+  String fieldType;
+  TextEditingController textController;
+
+  Field({
+    required this.fieldTitle,
+    required this.fieldType,
+    required this.textController,
   });
 }
 
@@ -54,5 +70,17 @@ class Message {
       ));
     }
     return actions;
+  }
+
+  List<Field> getFormFields() {
+    List<Field> fields = [];
+    for (var field in json_data['form']['fields']) {
+      fields.add(Field(
+        fieldTitle: field[0],
+        fieldType: field[1],
+        textController: TextEditingController(),
+      ));
+    }
+    return fields;
   }
 }
