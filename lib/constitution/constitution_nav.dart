@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_lawyer/constitution/law_list_nav/c_law_list.dart';
+import 'package:my_lawyer/constitution/law/c_law_details.dart';
 import 'package:my_lawyer/constitution/law_list_nav/law_list_nav.dart';
 import 'package:my_lawyer/home/widgets/card_button.dart';
 
@@ -40,6 +40,18 @@ class _ConstitutionHomeState extends State<ConstitutionHome> {
               scrollDirection: Axis.vertical,
               child: Column(
                 children: [
+                  CardButton(
+                    // This one is to test
+                    title: 'Law details',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ConstitutionLawDetails(),
+                        ),
+                      );
+                    },
+                  ),
                   CardButton(
                     title: 'Constitution 1',
                     onTap: () {
