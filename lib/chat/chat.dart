@@ -235,16 +235,6 @@ class _ChatState extends State<Chat> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chat'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                //showButtons = !showButtons;
-              });
-            },
-            icon: const Icon(Icons.more_vert),
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -305,43 +295,33 @@ class _ChatState extends State<Chat> {
                                 text: content,
                                 style: DefaultTextStyle.of(context).style,
                                 children: <TextSpan>[
-                                  TextSpan(
-                                    text: '\nLearn more on:',
-                                    style: TextStyle(
-                                      color: content.contains('constitution')
-                                          ? const Color.fromARGB(255, 0, 0, 0)
-                                          : null,
-                                      fontWeight: FontWeight.bold,
+                                  if (content.contains(
+                                      'constitution')) // Conditionally include the "Constitution" text
+                                    const TextSpan(
+                                      text: '\nLean more about constitution:',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold
+                                      ),
                                     ),
-                                  ),
-                                  TextSpan(
-                                    text: '\n',
-                                  ),
-                                  TextSpan(
-                                    text: 'Constitution',
-                                    style: TextStyle(
-                                      color: content.contains('constitution')
-                                          ? Colors.blue
-                                          : null,
-                                      decoration:
-                                          content.contains('constitution')
-                                              ? TextDecoration.underline
-                                              : null,
-                                      decorationColor:
-                                          content.contains('constitution')
-                                              ? Colors.blue
-                                              : null,
+                                  if (content.contains(
+                                      'constitution')) // Conditionally include the "Constitution" text
+                                    TextSpan(
+                                      text: '\nConstitution',
+                                      style: TextStyle(
+                                        color: Colors.blue,
+                                        decoration: TextDecoration.underline,
+                                        decorationColor: Colors.blue,
+                                      ),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ConstitutionHome()),
+                                          );
+                                        },
                                     ),
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ConstitutionHome()),
-                                        );
-                                      },
-                                  )
                                 ],
                               ),
                             ),
@@ -489,6 +469,9 @@ class _ChatState extends State<Chat> {
             padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
             child: Row(
               children: [
+                //create a button with icon camera
+                IconButton(
+                    icon: const Icon(Icons.camera_alt), onPressed: () {}),
                 Expanded(
                   child: Card(
                     margin: const EdgeInsets.only(left: 2, right: 2, bottom: 8),
