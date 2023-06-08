@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:http/http.dart' as http;
+import 'package:my_lawyer/constitution/constitution_nav.dart';
 import 'package:my_lawyer/models/message.dart';
 
 class Chat extends StatefulWidget {
@@ -223,14 +225,58 @@ class _ChatState extends State<Chat> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            for (var line
-                                in content.replaceAll('\\n', '\n').split('\n'))
-                              Text(line),
+                            RichText(
+                              text: TextSpan(
+                                text: content,
+                                style: DefaultTextStyle.of(context).style,
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: '\nLearn more on:',
+                                    style: TextStyle(
+                                      color: content.contains('constitution')
+                                          ? const Color.fromARGB(255, 0, 0, 0)
+                                          : null,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: '\n',
+                                  ),
+                                  TextSpan(
+                                    text: 'Constitution',
+                                    style: TextStyle(
+                                      color: content.contains('constitution')
+                                          ? Colors.blue
+                                          : null,
+                                      decoration:
+                                          content.contains('constitution')
+                                              ? TextDecoration.underline
+                                              : null,
+                                      decorationColor:
+                                          content.contains('constitution')
+                                              ? Colors.blue
+                                              : null,
+                                    ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ConstitutionHome()),
+                                        );
+                                      },
+                                  )
+                                ],
+                              ),
+                            ),
 
                             if (message.containsActions())
-                              Text("\n${message.getActionTitle()}",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
+                              Text(
+                                "\n${message.getActionTitle()}",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+
                             // render the buttons if the message is a question
                             if (message.containsActions())
                               Row(
@@ -254,9 +300,10 @@ class _ChatState extends State<Chat> {
                               ),
 
                             if (message.containsForm())
-                              Text("\n${message.getFormTitle()}",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
+                              Text(
+                                "\n${message.getFormTitle()}",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
                           ],
                         ),
                       ),
