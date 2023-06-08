@@ -9,6 +9,8 @@ import 'package:my_lawyer/models/message.dart';
 class Chat extends StatefulWidget {
   Chat({super.key, required this.chatID});
 
+  final BASE_API_URL = 'https://my-lawyer-api.sarwin.repl.co/';
+
   String chatID;
   List<Message> messages = [];
   bool aiIsTyping = false;
@@ -37,6 +39,50 @@ class _ChatState extends State<Chat> {
     });
   }
 
+  void requestForm(String action) async {
+    setState(() {
+      widget.aiIsTyping = true;
+    });
+
+    try {
+      // API endpoint URL
+      var url = Uri.parse(widget.BASE_API_URL + "form");
+
+      // Request headers (if required)
+      var headers = {'Content-Type': 'application/json'};
+
+      var body = json.encode({'chatID': widget.chatID, "action": action});
+
+      // Send POST request
+      var response = await http.post(url, headers: headers, body: body);
+      // Get response status code
+      var statusCode = response.statusCode;
+
+      // Handle the response data
+      if (statusCode == 200) {
+        var responseData = json.decode(response.body);
+        var responseMessage = responseData['message'];
+
+        // Update the UI with the response message
+        setState(() {
+          // Add the AI's message to the list in front
+          responseMessage = 'a~$responseMessage';
+          Message _msg = Message(content: responseMessage);
+          _msg.json_data = responseData;
+          widget.messages.insert(0, _msg);
+        });
+      } else {
+        print('Request failed with status: $statusCode');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+
+    setState(() {
+      widget.aiIsTyping = false;
+    });
+  }
+
   void sendMessage(String msg) async {
     print(msg);
     if (msg.isEmpty) return;
@@ -55,7 +101,7 @@ class _ChatState extends State<Chat> {
 
     try {
       // API endpoint URL
-      var url = Uri.parse('https://my-lawyer-api.sarwin.repl.co/message');
+      var url = Uri.parse(widget.BASE_API_URL + 'message');
 
       // Request headers (if required)
       var headers = {'Content-Type': 'application/json'};
@@ -63,7 +109,7 @@ class _ChatState extends State<Chat> {
       // Request body
       String raw_msg = msg.split('~')[1];
       var body = json.encode({
-        'chatID': 'TESTING',
+        'chatID': widget.chatID,
         'message': raw_msg,
         'debug': 'true',
       });
@@ -180,8 +226,11 @@ class _ChatState extends State<Chat> {
                             for (var line
                                 in content.replaceAll('\\n', '\n').split('\n'))
                               Text(line),
+
                             if (message.containsActions())
-                              Text("\n" + message.getActionTitle()),
+                              Text("\n${message.getActionTitle()}",
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
                             // render the buttons if the message is a question
                             if (message.containsActions())
                               Row(
@@ -193,13 +242,21 @@ class _ChatState extends State<Chat> {
                                         padding:
                                             const EdgeInsets.only(right: 10),
                                         child: ElevatedButton(
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            if (widget.aiIsTyping) return;
+                                            requestForm(action.actionUrl);
+                                          },
                                           child: Text(action.actionTitle),
                                         ),
                                       ),
                                     ),
                                 ],
                               ),
+
+                            if (message.containsForm())
+                              Text("\n${message.getFormTitle()}",
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
