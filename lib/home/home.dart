@@ -58,7 +58,6 @@ class HomeScreen extends StatelessWidget {
             FutureBuilder<QuerySnapshot>(
               future: FirebaseFirestore.instance
                   .collection('chat')
-                  .where('uid', isEqualTo: currentId)
                   .get(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
