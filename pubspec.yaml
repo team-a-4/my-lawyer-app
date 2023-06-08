@@ -43,6 +43,7 @@ dependencies:
   http: ^1.0.0
   dynamic_color: ^1.6.5
   flutter_chat_bubble: ^2.0.2
+  uuid: any
 
 dev_dependencies:
   flutter_test:
