@@ -248,24 +248,23 @@ class _ChatState extends State<Chat> {
                   );
                 } else if (sender == 'a') {
                   // AI message
-                  return Stack(
-                    children: [
-                      const Positioned(
-                        top: 25,
-                        left: 7,
-                        child: CircleAvatar(
-                          radius: 10,
-                          backgroundColor: Color.fromARGB(255, 243, 33, 33),
-                          child: Text(
-                            'AI',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                            ),
+                  return Stack(children: [
+                    const Positioned(
+                      top: 25,
+                      left: 7,
+                      child: CircleAvatar(
+                        radius: 10,
+                        backgroundColor: Color.fromARGB(255, 243, 33, 33),
+                        child: Text(
+                          'AI',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
                           ),
                         ),
                       ),
-                      ChatBubble(
+                    ),
+                    ChatBubble(
                         clipper:
                             ChatBubbleClipper5(type: BubbleType.receiverBubble),
                         alignment: Alignment.topLeft,
@@ -322,11 +321,9 @@ class _ChatState extends State<Chat> {
                             ),
 
                             if (message.containsActions())
-
                               Text("\n${message.getActionTitle()}",
                                   style:
                                       TextStyle(fontWeight: FontWeight.bold)),
-
 
                             // render the buttons if the message is a question
                             if (message.containsActions())
@@ -351,7 +348,6 @@ class _ChatState extends State<Chat> {
                               ),
 
                             if (message.containsForm())
-
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text("\n${message.getFormTitle()}",
@@ -403,17 +399,10 @@ class _ChatState extends State<Chat> {
                                     ),
                                   ],
                                 ),
-
-                              Text(
-                                "\n${message.getFormTitle()}",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-
                               ),
                           ],
-                        ),
-                      ),
-                    ],
-                  );
+                        ))
+                  ]);
                 } else if (sender == 'l') {
                   // Lawyer message
                   return Stack(
