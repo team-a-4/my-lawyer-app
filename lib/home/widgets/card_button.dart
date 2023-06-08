@@ -12,22 +12,29 @@ class CardButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 100, // Set the desired height of the card
-      child: Card(
-        color: Theme.of(context)
-            .colorScheme
-            .primary, // Set the background color of the card
-        child: ListTile(
-          title: Text(
-            title,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              fontSize: 18, // Set the text color
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+          vertical: 8.0), // Adjust the vertical padding as needed
+      child: SizedBox(
+        height: 90, // Set the desired height of the card
+        child: Card(
+          elevation: 5,
+          shadowColor: const Color.fromARGB(255, 54, 98, 244),
+          color: Colors.white, // Set the background color of the card
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(
+                vertical: 12.0), // Adjust the vertical padding as needed
+            title: Text(
+              title,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 0, 0, 0),
+                fontSize: 18, // Set the text color
+              ),
+              textAlign: TextAlign.center,
             ),
+            onTap: onTap,
           ),
-          onTap: onTap,
         ),
       ),
     );
