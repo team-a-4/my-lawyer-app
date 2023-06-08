@@ -4,322 +4,113 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:http/http.dart' as http;
-import 'package:my_lawyer/user.dart';
+import 'package:my_lawyer/models/message.dart';
 
 class Chat extends StatefulWidget {
-  String docID;
-  Chat({Key? key, required this.docID}) : super(key: key);
+  Chat({super.key, required this.chatID});
+
+  final BASE_API_URL = 'https://my-lawyer-api.sarwin.repl.co/';
+
+  String chatID;
+  List<Message> messages = [];
+  bool aiIsTyping = false;
 
   @override
-  State<Chat> createState() => _ChatState(docID);
+  State<Chat> createState() => _ChatState();
 }
 
-class _ChatState extends State<Chat> with TickerProviderStateMixin {
-  final String docID;
-  _ChatState(this.docID);
-  String buttonText = 'U';
-  Color buttonColor = Color.fromARGB(255, 33, 33, 243);
+class _ChatState extends State<Chat> {
   final messageController = TextEditingController();
-  bool showButtons = false;
-  late AnimationController _animationController;
-  late Animation<Offset> _slideAnimation;
-  String responseMessage = '';
-  String message_ = '';
-  var chatDocId;
-  List<String> chatMessages = []; // List to store chat messages
-  bool isChatDocCreated =
-      false; // Variable to track if chat document is created
 
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, -1),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOut,
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    // load the messages
-    FirebaseFirestore.instance
+  // load the messages from the database
+  void loadMessages() async {
+    var snapshot = await FirebaseFirestore.instance
         .collection("chat")
-        .doc(docID)
-        .get()
-        .then((value) {
-      if (value.exists) {
-        // if message array is empty delete document
-        if (value.data()!['messages'].isEmpty) {
-          FirebaseFirestore.instance.collection("chat").doc(docID).delete();
-        }
+        .doc(widget.chatID)
+        .get();
+
+    setState(() {
+      widget.messages = [];
+      var messages = snapshot.data()!['messages'];
+      for (var message in messages) {
+        widget.messages.add(Message(content: message));
       }
+      widget.messages = widget.messages.reversed.toList();
     });
-
-    _animationController.dispose();
-    super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-      stream:
-          FirebaseFirestore.instance.collection("chat").doc(docID).snapshots(),
-      builder: (BuildContext context,
-          AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
-        try {
-          // Handle error condition
-          if (snapshot.hasError) {
-            WidgetsBinding.instance!.addPostFrameCallback((_) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Something went wrong"),
-                  backgroundColor: Colors.red,
-                  duration: Duration(seconds: 3),
-                ),
-              );
-            });
-          } else {
-            // Build the chat UI
-            return Scaffold(
-              appBar: AppBar(
-                title: const Text('Chat'),
-                actions: [
-                  IconButton(
-                    onPressed: () {
-                      setState(() {
-                        showButtons = !showButtons;
-                      });
-                    },
-                    icon: const Icon(Icons.more_vert),
-                  ),
-                ],
-              ),
-              body: Column(
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                      reverse: true,
-                      itemCount: snapshot.data!.data()!['messages'].length,
-                      itemBuilder: (context, index) {
-                        var message = snapshot.data!.data()!['messages'][index];
-
-                        // Split the message into the sender and the actual message content
-                        var splitMessage = message.split('~');
-                        var sender = splitMessage[0];
-                        var content = splitMessage[1];
-
-                        if (sender == 'u') {
-                          // User message
-                          return ChatBubble(
-                            clipper:
-                                ChatBubbleClipper5(type: BubbleType.sendBubble),
-                            alignment: Alignment.topRight,
-                            margin: const EdgeInsets.only(
-                                top: 20, right: 10, left: 10),
-                            backGroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            child: Text(
-                              content,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          );
-                        } else if (sender == 'a') {
-                          // AI message
-                          return Stack(
-                            children: [
-                              const Positioned(
-                                top: 25,
-                                left: 7,
-                                child: CircleAvatar(
-                                  radius: 10,
-                                  backgroundColor:
-                                      Color.fromARGB(255, 243, 33, 33),
-                                  child: Text(
-                                    'AI',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 10,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              ChatBubble(
-                                clipper: ChatBubbleClipper5(
-                                    type: BubbleType.receiverBubble),
-                                alignment: Alignment.topLeft,
-                                margin: const EdgeInsets.only(
-                                    top: 20, left: 32, right: 10),
-                                backGroundColor: Colors.grey[300],
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    for (var line in content
-                                        .replaceAll('\\n', '\n')
-                                        .split('\n'))
-                                      Text(line),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          );
-                        } else if (sender == 'l') {
-                          // Lawyer message
-                          return Stack(
-                            children: [
-                              const Positioned(
-                                top: 25,
-                                left: 7,
-                                child: CircleAvatar(
-                                  radius: 10,
-                                  backgroundColor: Colors.green,
-                                  child: Text(
-                                    'L',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 10,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              ChatBubble(
-                                clipper: ChatBubbleClipper5(
-                                    type: BubbleType.receiverBubble),
-                                alignment: Alignment.topLeft,
-                                margin:
-                                    const EdgeInsets.only(top: 20, left: 32),
-                                backGroundColor: Colors.grey[300],
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    for (var line in content
-                                        .replaceAll('\\n', '\n')
-                                        .split('\n'))
-                                      Text(line),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          );
-                        } else {
-                          return Container(); // Unknown sender, return an empty container
-                        }
-                      },
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.only(left: 10, right: 10),
-                    child: Row(
-                      children: [
-                        Positioned(
-                          top: 10,
-                          left: 0,
-                          child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                if (buttonText == 'U') {
-                                  buttonText = 'A';
-                                  buttonColor = Colors.red;
-                                } else {
-                                  buttonText = 'U';
-                                  buttonColor =
-                                      Color.fromARGB(255, 33, 33, 243);
-                                }
-                              });
-                            },
-                            child: CircleAvatar(
-                              radius: 10,
-                              backgroundColor: buttonColor,
-                              child: Text(
-                                buttonText,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Card(
-                            margin: const EdgeInsets.only(
-                                left: 2, right: 2, bottom: 8),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15.0),
-                            ),
-                            child: TextFormField(
-                              controller: messageController,
-                              keyboardType: TextInputType.multiline,
-                              maxLines: 3,
-                              minLines: 1,
-                              decoration: const InputDecoration(
-                                border: InputBorder.none,
-                                hintText: 'Type a message',
-                                contentPadding: EdgeInsets.only(
-                                  left: 15,
-                                  bottom: 12,
-                                  top: 15,
-                                  right: 15,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 15),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: Container(
-                            color: Theme.of(context).colorScheme.primary,
-                            child: IconButton(
-                              onPressed: () {
-                                sendMessage(messageController.text);
-                              },
-                              icon: const Icon(Icons.send_rounded),
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-        } catch (e, stackTrace) {
-          // Handle the exception here
-          print('Error: $e');
-          print(stackTrace);
-          return Container(); // Return a default widget in case of error
-        }
-
-        return Container(); // Return a default widget in case of no error
-      },
-    );
-  }
-
-  void sendMessage(String msg) async {
-    if (msg.isEmpty) return;
+  void requestForm(String action) async {
+    setState(() {
+      widget.aiIsTyping = true;
+    });
 
     try {
       // API endpoint URL
-      var url = Uri.parse('https://my-lawyer-api.sarwin.repl.co/message');
+      var url = Uri.parse(widget.BASE_API_URL + "form");
+
+      // Request headers (if required)
+      var headers = {'Content-Type': 'application/json'};
+
+      var body = json.encode({'chatID': widget.chatID, "action": action});
+
+      // Send POST request
+      var response = await http.post(url, headers: headers, body: body);
+      // Get response status code
+      var statusCode = response.statusCode;
+
+      // Handle the response data
+      if (statusCode == 200) {
+        var responseData = json.decode(response.body);
+        var responseMessage = responseData['message'];
+
+        // Update the UI with the response message
+        setState(() {
+          // Add the AI's message to the list in front
+          responseMessage = 'a~$responseMessage';
+          Message _msg = Message(content: responseMessage);
+          _msg.json_data = responseData;
+          widget.messages.insert(0, _msg);
+        });
+      } else {
+        print('Request failed with status: $statusCode');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+
+    setState(() {
+      widget.aiIsTyping = false;
+    });
+  }
+
+  void sendMessage(String msg) async {
+    print(msg);
+    if (msg.isEmpty) return;
+
+    // Update the messages list with the user's message
+    setState(() {
+      // Add the user's message to the list in front
+      msg = 'u~$msg';
+      Message _msg = Message(content: msg);
+      widget.messages.insert(0, _msg);
+      widget.aiIsTyping = true;
+    });
+
+    // Clear the text field
+    messageController.clear();
+
+    try {
+      // API endpoint URL
+      var url = Uri.parse(widget.BASE_API_URL + 'message');
 
       // Request headers (if required)
       var headers = {'Content-Type': 'application/json'};
 
       // Request body
+      String raw_msg = msg.split('~')[1];
       var body = json.encode({
-        'chatID': 'TESTING',
-        'message': msg,
+        'chatID': widget.chatID,
+        'message': raw_msg,
         'debug': 'true',
       });
 
@@ -327,48 +118,249 @@ class _ChatState extends State<Chat> with TickerProviderStateMixin {
       var response = await http.post(url, headers: headers, body: body);
       // Get response status code
       var statusCode = response.statusCode;
-      print('Response Status Code: $statusCode');
+      print(response.body);
 
       // Handle the response data
       if (statusCode == 200) {
         var responseData = json.decode(response.body);
         var responseMessage = responseData['message'];
 
-        if (!isChatDocCreated) {
-          // Create a new document in the "chat" collection
-          var newDocRef =
-              await FirebaseFirestore.instance.collection("chat").add({
-            'messages': ['u-$msg'],
-            'uid': currentId
-          });
-          chatDocId = newDocRef.id; // Store the document ID for future use
-          isChatDocCreated = true;
-        } else {
-          // Update the existing document in the "chat" collection
-          await FirebaseFirestore.instance
-              .collection("chat")
-              .doc(chatDocId)
-              .update({
-            'messages': FieldValue.arrayUnion(['u-$msg']),
-          });
-        }
-
         // Update the UI with the response message
         setState(() {
-          // Update the message_ variable with the new message text
-          message_ = msg;
-
-          // Add the response message to the chatMessages list
-          chatMessages.add(responseMessage);
+          // Add the AI's message to the list in front
+          responseMessage = 'a~$responseMessage';
+          Message _msg = Message(content: responseMessage);
+          _msg.json_data = responseData;
+          widget.messages.insert(0, _msg);
         });
-
-        // Clear the TextEditingController
-        messageController.clear();
       } else {
         print('Request failed with status: $statusCode');
       }
     } catch (e) {
       print('Error: $e');
     }
+
+    setState(() {
+      widget.aiIsTyping = false;
+    });
+  }
+
+  // init state
+  @override
+  void initState() {
+    super.initState();
+    loadMessages();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Chat'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                //showButtons = !showButtons;
+              });
+            },
+            icon: const Icon(Icons.more_vert),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              reverse: true,
+              itemCount: widget.messages.length,
+              itemBuilder: (context, index) {
+                Message message = widget.messages[index];
+
+                // Split the message into the sender and the actual message content
+                var splitMessage = message.content.split('~');
+                var sender = splitMessage[0];
+                var content = splitMessage[1];
+
+                if (sender == 'u') {
+                  // User message
+                  return ChatBubble(
+                    clipper: ChatBubbleClipper5(type: BubbleType.sendBubble),
+                    alignment: Alignment.topRight,
+                    margin: const EdgeInsets.only(top: 20, right: 10, left: 10),
+                    backGroundColor: Theme.of(context).colorScheme.primary,
+                    child: Text(
+                      content,
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  );
+                } else if (sender == 'a') {
+                  // AI message
+                  return Stack(
+                    children: [
+                      const Positioned(
+                        top: 25,
+                        left: 7,
+                        child: CircleAvatar(
+                          radius: 10,
+                          backgroundColor: Color.fromARGB(255, 243, 33, 33),
+                          child: Text(
+                            'AI',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ),
+                      ),
+                      ChatBubble(
+                        clipper:
+                            ChatBubbleClipper5(type: BubbleType.receiverBubble),
+                        alignment: Alignment.topLeft,
+                        margin:
+                            const EdgeInsets.only(top: 20, left: 32, right: 10),
+                        backGroundColor: Colors.grey[300],
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            for (var line
+                                in content.replaceAll('\\n', '\n').split('\n'))
+                              Text(line),
+
+                            if (message.containsActions())
+                              Text("\n${message.getActionTitle()}",
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                            // render the buttons if the message is a question
+                            if (message.containsActions())
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  for (var action in message.getActionOptions())
+                                    Center(
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 10),
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            if (widget.aiIsTyping) return;
+                                            requestForm(action.actionUrl);
+                                          },
+                                          child: Text(action.actionTitle),
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+
+                            if (message.containsForm())
+                              Text("\n${message.getFormTitle()}",
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                } else if (sender == 'l') {
+                  // Lawyer message
+                  return Stack(
+                    children: [
+                      const Positioned(
+                        top: 25,
+                        left: 7,
+                        child: CircleAvatar(
+                          radius: 10,
+                          backgroundColor: Colors.green,
+                          child: Text(
+                            'L',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ),
+                      ),
+                      ChatBubble(
+                        clipper:
+                            ChatBubbleClipper5(type: BubbleType.receiverBubble),
+                        alignment: Alignment.topLeft,
+                        margin: const EdgeInsets.only(top: 20, left: 32),
+                        backGroundColor: Colors.grey[300],
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            for (var line
+                                in content.replaceAll('\\n', '\n').split('\n'))
+                              Text(line),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                } else {
+                  return Container(); // Unknown sender, return an empty container
+                }
+              },
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Card(
+                    margin: const EdgeInsets.only(left: 2, right: 2, bottom: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    child: TextFormField(
+                      controller: messageController,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: 3,
+                      minLines: 1,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Type a message',
+                        contentPadding: EdgeInsets.only(
+                          left: 15,
+                          bottom: 12,
+                          top: 15,
+                          right: 15,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 15),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: widget.aiIsTyping == false
+                      ? Container(
+                          color: Theme.of(context).colorScheme.primary,
+                          child: IconButton(
+                            onPressed: () {
+                              sendMessage(messageController.text);
+                            },
+                            icon: const Icon(Icons.send_rounded),
+                            color: Colors.white,
+                          ),
+                        )
+                      : Container(
+                          color: Theme.of(context).colorScheme.primary,
+                          child: IconButton(
+                            onPressed: () {},
+                            // loading icon
+                            icon: const Icon(Icons.lock_clock_rounded),
+                            color: Colors.white,
+                          ),
+                        ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
