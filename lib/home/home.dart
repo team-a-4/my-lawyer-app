@@ -4,6 +4,7 @@ import 'package:my_lawyer/accident_procedures/accident_nav.dart';
 import 'package:my_lawyer/chat/chat.dart';
 import 'package:my_lawyer/constitution/constitution_nav.dart';
 import 'package:my_lawyer/emergency_contacts/contact_nav.dart';
+import 'package:my_lawyer/fines/fines_nav.dart';
 import 'package:my_lawyer/home/widgets/card_button.dart';
 import 'package:my_lawyer/home/search.dart';
 
@@ -22,7 +23,7 @@ class HomeScreen extends StatelessWidget {
     ),
     Law(
       title: 'Fines',
-      screen: const ConstitutionHome(),
+      screen: const FinesHome(),
     ),
     Law(
       title: 'Emergency Contacts',
