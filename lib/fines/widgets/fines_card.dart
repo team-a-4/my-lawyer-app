@@ -17,25 +17,44 @@ class _FinesCardState extends State<FinesCard> {
       padding:
           const EdgeInsets.all(8.0), // Adjust the vertical padding as needed
       child: SizedBox(
-        height: 90, // Set the desired height of the card
+        height: 140, // Set the desired height of the card
         child: Card(
           elevation: 1,
           shadowColor: Theme.of(context).colorScheme.scrim,
           color: Theme.of(context)
               .colorScheme
               .surfaceVariant, // Set the background color of the card
-          child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(
-                vertical: 12.0), // Adjust the vertical padding as needed
-            title: Text(
-              widget.title,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Color.fromARGB(255, 0, 0, 0),
-                fontSize: 18, // Set the text color
+          child: Stack(
+            children: [
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(
+                    vertical: 12.0), // Adjust the vertical padding as needed
+                title: Text(
+                  widget.title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                    fontSize: 18, // Set the text color
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ),
-              textAlign: TextAlign.center,
-            ),
+              Positioned(
+                bottom: 2, // Adjust the bottom position as needed
+                right: 8, // Adjust the right position as needed
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    widget.amount, // Replace with the actual amount value
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
