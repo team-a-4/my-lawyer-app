@@ -60,7 +60,7 @@ class _ConstitutionLawListState extends State<ConstitutionLawList> {
           );
         } else {
           return ListView.builder(
-            itemCount: 5,
+            itemCount: 6,
             itemBuilder: (context, index) {
               return const LawCardSkeleton();
             },

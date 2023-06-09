@@ -24,7 +24,7 @@ class _ContactHomeState extends State<ContactHome> {
           const Align(
             alignment: Alignment.center,
             child: Padding(
-              padding: EdgeInsets.only(bottom: 16.0),
+              padding: EdgeInsets.only(left: 16, right: 16, bottom: 16.0),
               child: Text(
                 "Easily accessible emergency contact numbers provide quick connections to local authorities, including police, fire, and medical services. Stay prepared and confident, knowing that help is just a phone call away in any urgent situation.",
                 textAlign: TextAlign.justify,

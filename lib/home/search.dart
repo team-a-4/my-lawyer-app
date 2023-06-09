@@ -18,6 +18,7 @@ class _SearchPageState extends State<SearchPage> {
   void initState() {
     super.initState();
     fetchLaws();
+    // fetchFines();
   }
 
   Future<void> fetchLaws() async {
@@ -29,6 +30,7 @@ class _SearchPageState extends State<SearchPage> {
       'constitution_ch5_p1',
       'constitution_ch5_p2',
       'constitution_ch8',
+      'accidentProcedure',
     ];
 
     for (String collectionName in collectionNames) {
@@ -36,8 +38,7 @@ class _SearchPageState extends State<SearchPage> {
           await FirebaseFirestore.instance.collection(collectionName).get();
 
       querySnapshot.docs.forEach((DocumentSnapshot document) {
-        Map<String, dynamic>? data =
-            document.data() as Map<String, dynamic>?;
+        Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
 
         String docId = document.id;
         List<dynamic> information = data!['information'];
@@ -58,6 +59,7 @@ class _SearchPageState extends State<SearchPage> {
         for (String info in law.info) {
           if (info.toLowerCase().contains(query.toLowerCase())) {
             filteredList.add(law.id);
+            print(law.id);
             break;
           }
         }

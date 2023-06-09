@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:my_lawyer/constitution/law_list_nav/law_list_nav.dart';
+import 'package:my_lawyer/fines/fines_list_nav/fines_list_nav.dart';
 import 'package:my_lawyer/home/widgets/card_button.dart';
 
-class ConstitutionHome extends StatefulWidget {
-  const ConstitutionHome({super.key});
+class FinesHome extends StatefulWidget {
+  const FinesHome({super.key});
 
   @override
-  State<ConstitutionHome> createState() => _ConstitutionHomeState();
+  State<FinesHome> createState() => _FinesHomeState();
 }
 
-class _ConstitutionHomeState extends State<ConstitutionHome> {
+class _FinesHomeState extends State<FinesHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Constitutions',
+          'Fines',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -29,7 +29,7 @@ class _ConstitutionHomeState extends State<ConstitutionHome> {
               child: Padding(
                 padding: EdgeInsets.only(left: 16, right: 16, bottom: 16.0),
                 child: Text(
-                  'The Constitution is a fundamental legal document that establishes the principles, structure, and powers of a country\'s government. It serves as the supreme law of the land and sets out the rights and freedoms of individuals. The Constitution outlines the organization and functions of government branches, such as the executive, legislative, and judicial branches, and establishes a system of checks and balances. It may also provide a mechanism for amendments to adapt to changing times. The Constitution is essential for ensuring governance, protecting individual rights, and upholding the rule of law.',
+                  'Stay prepared and confident, knowing that the right contact numbers for fines are just a phone call away. Address any concerns promptly by reaching out to the appropriate local authorities or agencies responsible for handling fines. Stay informed and proactive to navigate through fines-related matters with ease.',
                   textAlign: TextAlign.justify,
                   style: TextStyle(fontSize: 15),
                 ),
@@ -40,92 +40,102 @@ class _ConstitutionHomeState extends State<ConstitutionHome> {
               child: Column(
                 children: [
                   CardButton(
-                    title: 'Constitution 1',
+                    title: 'Automoto Cycles',
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const LawListNav(
-                              colName: "constitution_ch1",
-                              title: "Constitution 1"),
+                          builder: (context) => const FinesListNav(
+                              colName: "finesAutomotoCycle",
+                              title: "Automoto Cycles"),
                         ),
                       );
                     },
                   ),
                   CardButton(
-                    title: 'Constitution 2',
+                    title: 'Documents',
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const LawListNav(
-                              colName: "constitution_ch2",
-                              title: "Constitution 2"),
+                          builder: (context) => const FinesListNav(
+                              colName: "finesDocuments", title: "Documents"),
                         ),
                       );
                     },
                   ),
                   CardButton(
-                    title: 'Constitution 3',
+                    title: 'Fittings',
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const LawListNav(
-                              colName: "constitution_ch3",
-                              title: "Constitution 3"),
+                          builder: (context) => const FinesListNav(
+                              colName: "finesFittings", title: "Fittings"),
                         ),
                       );
                     },
                   ),
                   CardButton(
-                    title: 'Constitution 4',
+                    title: 'Goods Vehicles',
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const LawListNav(
-                              colName: "constitution_ch4",
-                              title: "Constitution 4"),
+                          builder: (context) => const FinesListNav(
+                              colName: "finesGoodsVehicles",
+                              title: "Goods Vehicles"),
                         ),
                       );
                     },
                   ),
                   CardButton(
-                    title: 'Constitution 5 Part 1',
+                    title: 'Lights',
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const LawListNav(
-                              colName: "constitution_ch5_p1",
-                              title: "Constitution 5 Part 1"),
+                          builder: (context) => const FinesListNav(
+                              colName: "finesLights", title: "Lights"),
                         ),
                       );
                     },
                   ),
                   CardButton(
-                    title: 'Constitution 5 Part 2',
+                    title: 'Motorway & Roads',
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const LawListNav(
-                              colName: "constitution_ch5_p2",
-                              title: "Constitution 5 Part 2"),
+                          builder: (context) => const FinesListNav(
+                              colName: "finesMotoway&Roads",
+                              title: "Motorway & Roads"),
                         ),
                       );
                     },
                   ),
                   CardButton(
-                    title: 'Constitution 8',
+                    title: 'Private Car Van',
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const LawListNav(
-                              colName: "constitution_ch8",
-                              title: "Constitution 8"),
+                          builder: (context) => const FinesListNav(
+                              colName: "finesPrivateCarVan",
+                              title: "Private Car Van"),
+                        ),
+                      );
+                    },
+                  ),
+                  CardButton(
+                    title: 'Registration Mark',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const FinesListNav(
+                              colName: "finesRegistrationMark",
+                              title: "Registration Mark"),
                         ),
                       );
                     },
