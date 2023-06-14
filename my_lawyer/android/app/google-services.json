@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "402198996298",
+    "project_id": "lawyer-app-fa8b6",
+    "storage_bucket": "lawyer-app-fa8b6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:402198996298:android:5bfc8682fb3e31a59f0db3",
+        "android_client_info": {
+          "package_name": "com.mylawyer.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "402198996298-70lgfm6u36gui76npsqjmqfor9i5bfu0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpHO6ZCEZfzt8XicA5gIYDgzGHFY4mxOM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "402198996298-70lgfm6u36gui76npsqjmqfor9i5bfu0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

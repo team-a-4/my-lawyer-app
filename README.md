@@ -1,16 +1,19 @@
-# my_lawyer
+# MyLawyer
 
-A new Flutter project.
+MyLawer is a remarkable project developed for the University of Mauritius App Cup 2023, accomplished in an impressive timeframe of just 2 days. The application aims to assist and empower individuals in comprehending the intricate Mauritian laws with ease and efficiency. With its powerful chatbot, MyLawer excels in identifying diverse legal scenarios, including tasks like filling insurance claims, and offers users step-by-step guidance, ensuring accurate and streamlined completion of necessary forms. The user-friendly interface enhances the overall experience, providing seamless navigation through the complexities of the Mauritian legal system. By incorporating a comprehensive database of laws, regulations, and legal procedures, MyLawer equips users with the tools to search and explore specific legislations or browse through categories, facilitating a deeper understanding of the legal framework at their fingertips.
 
-## Getting Started
+<br>
 
-This project is a starting point for a Flutter application.
+## Task Distribution
+### Front End (Flutter)
+- [Sarwin Rajiah](https://github.com/SarwinR)
+- Levyn Kwong Hin Sang
+- Geerishraj Bheekhum
+- Feiz Ahmad Shakeel Roojee
 
-A few resources to get you started if this is your first Flutter project:
+### Back End (Python)
+- [Sarwin Rajiah](https://github.com/SarwinR)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Date Scraping
+- Geerishraj Bheekhum
+- Muhammad Farhaan Nazirkhan
