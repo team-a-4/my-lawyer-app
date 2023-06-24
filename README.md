@@ -11,8 +11,9 @@ MyLawer is a remarkable project developed for the University of Mauritius App Cu
 - Geerishraj Bheekhum
 - Feiz Ahmad Shakeel Roojee
 
-### Back End (Python)
+### Back End (Python & Firebase database)
 - [Sarwin Rajiah](https://github.com/SarwinR)
+- Levyn Kwong Hin Sang
 
 ### Date Scraping
 - Geerishraj Bheekhum
