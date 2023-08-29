@@ -9,7 +9,7 @@ MyLawer is a remarkable project developed for the University of Mauritius App Cu
 - [Sarwin Rajiah](https://github.com/SarwinR)
 - [Levyn Kwong Hin Sang](https://github.com/levynkwong2001)
 - Geerishraj Bheekhum
-- Feiz Ahmad Shakeel Roojee
+- [Feiz Ahmad Shakeel Roojee](https://github.com/RFeiz)
 
 ### Back End (Python & Firebase database)
 - [Sarwin Rajiah](https://github.com/SarwinR)
